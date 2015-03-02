@@ -101,6 +101,7 @@ CUserMenu::~CUserMenu()
 bool CUserMenu::showUserMenu(neutrino_msg_t msg)
 {
 	int button = -1;
+	int dummy = 0;
 	unsigned ums = g_settings.usermenu.size();
 	for (unsigned int i = 0; i < ums; i++)
 		if (g_settings.usermenu[i]->key == msg) {
@@ -236,7 +237,7 @@ bool CUserMenu::showUserMenu(neutrino_msg_t msg)
 			break;
 		case SNeutrinoSettings::ITEM_EPG_MISC:
 		{
-			int dummy = g_Sectionsd->getIsScanningActive();
+			dummy = g_Sectionsd->getIsScanningActive();
 			keyhelper.get(&key,&icon);
 			//          new CMenuOptionChooser(LOCALE_VIDEOMENU_VIDEOMODE, &g_settings.video_Mode, VIDEOMENU_VIDEOMODE_OPTIONS, VIDEOMENU_VIDEOMODE_OPTION_COUNT, true, this, CRCInput::RC_nokey, "", true);
 			menu_item = new CMenuOptionChooser(LOCALE_MAINMENU_PAUSESECTIONSD, &dummy, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true, this , key, icon );
@@ -355,18 +356,18 @@ bool CUserMenu::showUserMenu(neutrino_msg_t msg)
 			menu_item = new CMenuForwarder(!g_settings.mode_clock ? LOCALE_CLOCK_SWITCH_ON:LOCALE_CLOCK_SWITCH_OFF, true, NULL, neutrino, "clock_switch", key, icon);
 			menu_item->setHint("", LOCALE_MENU_HINT_CLOCK_MODE);
 			break;
+#if 0
 		case SNeutrinoSettings::ITEM_ADZAP:
 			keyhelper.get(&key,&icon,CRCInput::RC_blue);
 			menu_item = new CMenuForwarder(LOCALE_USERMENU_ITEM_ADZAP, true, NULL, neutrino, "adzap", key, icon);
 			menu_item->setHint("", LOCALE_MENU_HINT_ADZAP);
 			break;
-		case SNeutrinoSettings::ITEM_EMU_RESTART:
-			if (access("/etc/init.d/softcam", X_OK))
-				continue;
+		case SNeutrinoSettings::ITEM_NETZKINO:
 			keyhelper.get(&key,&icon);
-			menu_item = new CMenuForwarder(LOCALE_SERVICEMENU_RESTART_CAM, true, NULL, neutrino, "restartcam", key, icon);
-			menu_item->setHint(NEUTRINO_ICON_HINT_RELOAD_CHANNELS, LOCALE_MENU_HINT_RESTART_CAM);
+			menu_item = new CMenuForwarder(LOCALE_MOVIEPLAYER_NKPLAYBACK, true, NULL, neutrino, "nkplayback", key, icon);
+			menu_item->setHint(NEUTRINO_ICON_HINT_NKPLAY, LOCALE_MENU_HINT_NKPLAY);
 			break;
+#endif
 		case SNeutrinoSettings::ITEM_TUNER_RESTART:
 			keyhelper.get(&key,&icon);
 			menu_item = new CMenuForwarder(LOCALE_SERVICEMENU_RESTART_TUNER, true, NULL, neutrino, "restarttuner", key, icon);
@@ -390,11 +391,6 @@ bool CUserMenu::showUserMenu(neutrino_msg_t msg)
 			keyhelper.get(&key,&icon);
 			menu_item = new CMenuForwarder(LOCALE_MOVIEPLAYER_YTPLAYBACK, true, NULL, neutrino, "ytplayback", key, icon);
 			menu_item->setHint(NEUTRINO_ICON_HINT_YTPLAY, LOCALE_MENU_HINT_YTPLAY);
-			break;
-		case SNeutrinoSettings::ITEM_NETZKINO:
-			keyhelper.get(&key,&icon);
-			menu_item = new CMenuForwarder(LOCALE_MOVIEPLAYER_NKPLAYBACK, true, NULL, neutrino, "nkplayback", key, icon);
-			menu_item->setHint(NEUTRINO_ICON_HINT_NKPLAY, LOCALE_MENU_HINT_NKPLAY);
 			break;
 		case SNeutrinoSettings::ITEM_FILEPLAY:
 			keyhelper.get(&key,&icon);
@@ -542,9 +538,11 @@ const char *CUserMenu::getUserMenuButtonName(int button, bool &active)
 					return_title = true;
 				active = true;
 				continue;
+#if 0
 			case SNeutrinoSettings::ITEM_RASS:
 				if (!(CNeutrinoApp::getInstance()->getMode() == CNeutrinoApp::mode_radio && g_Radiotext && g_Radiotext->haveRASS()))
 					continue;
+#endif
 			default:
 				if(loc == NONEXISTANT_LOCALE && !text)
 					loc = CUserMenuSetup::getLocale(item);
