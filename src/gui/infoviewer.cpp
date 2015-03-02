@@ -5,6 +5,8 @@
 	Homepage: http://dbox.cyberphoria.org/
 
 	Bugfixes/cleanups (C) 2007-2013 Stefan Seyfried
+	(C) 2008 Novell, Inc. Author: Stefan Seyfried
+
 	Kommentar:
 
 	Diese GUI wurde von Grund auf neu programmiert und sollte nun vom

@@ -40,6 +40,7 @@
 #include <driver/fontrenderer.h>
 #include <driver/fade.h>
 #include <system/settings.h>
+#include <system/hddstat.h>
 #include "widget/menue.h"
 #include <gui/components/cc.h>
 #include <string>
@@ -119,12 +120,17 @@ class CInfoViewerBB
 		void showOne_CAIcon();
 		void changePB(void);
 
+		void paintEmuIcons(int);
+		void paintECM();
+		void painttECMInfo(int xa, const char *info, char *caid, char *decode, char *response, char *prov);
+
 		static void* scrambledThread(void *arg);
 		void scrambledCheck(bool force=false);
 
 		void showBarSys(int percent = 0);
 		void showBarHdd(int percent = 0);
 
+		int emu ; // 1 mgcamd 2 gbox  3 oscam
 		CInfoViewerBB();
 
 	public:
