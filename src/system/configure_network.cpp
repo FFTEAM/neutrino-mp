@@ -2,6 +2,7 @@
  * $port: configure_network.cpp,v 1.7 2009/11/20 22:44:19 tuxbox-cvs Exp $
  *
  * (C) 2003 by thegoodguy <thegoodguy@berlios.de>
+ * (C) 2011 Stefan Seyfried
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <config.h>
 #include <cstdio>               /* perror... */
 #include <sys/wait.h>
 #include <sys/types.h>          /* u_char */
+#include <sys/stat.h>
 #include <string.h>
 #include <unistd.h>
 #include "configure_network.h"
@@ -101,6 +101,7 @@ void CNetworkConfig::init_vars(void)
 
 	key = "";
 	ssid = "";
+	encryption = "WPA2";
 	wireless = 0;
 	std::string tmp = "/sys/class/net/" + ifname + "/wireless";
 
@@ -124,6 +125,7 @@ void CNetworkConfig::copy_to_orig(void)
 	orig_ifname	     = ifname;
 	orig_ssid	     = ssid;
 	orig_key	     = key;
+	orig_encryption	     = encryption;
 }
 
 bool CNetworkConfig::modified_from_orig(void)
@@ -147,7 +149,7 @@ bool CNetworkConfig::modified_from_orig(void)
 			printf("CNetworkConfig::modified_from_orig: ifname changed\n");
 #endif
 	if(wireless) {
-		if((ssid != orig_ssid) || (key != orig_key))
+		if((ssid != orig_ssid) || (key != orig_key) || (encryption != orig_encryption))
 			return 1;
 	}
 	/* check for following changes with dhcp enabled trigger apply question on menu quit, 
@@ -200,7 +202,7 @@ void CNetworkConfig::commitConfig(void)
 			addLoopbackDevice("lo", true);
 			setDhcpAttributes(ifname, automatic_start, wireless);
 		}
-		if(wireless && ((key != orig_key) || (ssid != orig_ssid)))
+		if (wireless && ((key != orig_key) || (ssid != orig_ssid) || (encryption != orig_encryption)))
 			saveWpaConfig();
 
 		copy_to_orig();
@@ -239,38 +241,26 @@ void CNetworkConfig::stopNetwork(void)
 
 void CNetworkConfig::readWpaConfig()
 {
-	std::string   s;
-	std::ifstream in("/etc/wpa_supplicant.conf");
-
+	std::ifstream F("/etc/network/pre-wlan.sh");
 	ssid = "";
 	key = "";
-	if(!in.is_open()) {
-		perror("/etc/wpa_supplicant.conf read error");
-		return;
-	}
-	while(getline(in, s)) {
-		if(s[0] == '#')
-			continue;
-		std::string::size_type i = s.find('=');
-		if (i != std::string::npos) {
-			std::string n = s.substr(0, i);
-			std::string val = s.substr(i + 1, s.length() - (i + 1));
-
-			while((i = n.find(' ')) != std::string::npos)
-				n.erase(i, 1);
-			while((i = n.find('\t')) != std::string::npos)
-				n.erase(i, 1);
-
-			if((i = val.find('"')) != std::string::npos)
-				val.erase(i, 1);
-			if((i = val.rfind('"')) != std::string::npos)
-				val.erase(i, 1);
-
-			if(n == "ssid")
-				ssid = val;
-			else if(n == "psk")
-				key = val;
+	encryption = "WPA2";
+	if(F.is_open()) {
+		std::string line;
+		std::string authmode = "WPA2PSK";
+		while (std::getline(F, line)) {
+			if (line.length() < 5)
+		continue;
+		if (!line.compare(0, 3, "E=\""))
+			ssid = line.substr(3, line.length() - 4);
+		else if (!line.compare(0, 3, "A=\""))
+			authmode = line.substr(3, line.length() - 4);
+		else if (!line.compare(0, 3, "K=\""))
+			key = line.substr(3, line.length() - 4);
 		}
+		F.close();
+		if (authmode == "WPAPSK")
+			encryption = "WPA";
 	}
 #ifdef DEBUG
 	printf("CNetworkConfig::readWpaConfig: ssid %s key %s\n", ssid.c_str(), key.c_str());
@@ -282,19 +272,53 @@ void CNetworkConfig::saveWpaConfig()
 #ifdef DEBUG
 	printf("CNetworkConfig::saveWpaConfig\n");
 #endif
-	std::ofstream out("/etc/wpa_supplicant.conf");
-	if(!out.is_open()) {
-		perror("/etc/wpa_supplicant.conf write error");
-		return;
+	std::ofstream F("/etc/network/pre-wlan.sh");
+	if(F.is_open()) {
+		chmod("/etc/network/pre-wlan.sh", 0755);
+		// We don't have this information  --martii
+
+		std::string authmode = "WPA2PSK"; // WPA2
+		std::string encryptype = "AES"; // WPA2
+		std::string proto = "RSN";
+		if (encryption == "WPA") {
+			proto = "WPA";
+			authmode = "WPAPSK";
+			encryptype = "TKIP";
+		}
+		F << "#!/bin/sh\n"
+                  << "# AUTOMATICALLY GENERATED. DO NOT MODIFY.\n"
+		  << "grep $IFACE: /proc/net/wireless >/dev/null 2>&1 || exit 0\n"
+		  << "kill -9 $(pidof wpa_supplicant 2>/dev/null) 2>/dev/null\n"
+		  << "E=\"" << ssid << "\"\n"
+		  << "A=\"" << authmode << "\"\n"
+		  << "C=\"" << encryptype << "\"\n"
+		  << "K=\"" << key << "\"\n"
+		  << "ifconfig $IFACE down\n"
+		  << "ifconfig $IFACE up\n"
+		  << "iwconfig $IFACE mode managed\n"
+		  << "iwconfig $IFACE essid \"$E\"\n"
+		  << "iwpriv $IFACE set AuthMode=$A\n"
+		  << "iwpriv $IFACE set EncrypType=$C\n"
+		  << "if ! iwpriv $IFACE set \"WPAPSK=$K\"\n"
+		  << "then\n"
+		  << "\t/sbin/wpa_supplicant -B -i$IFACE -c/etc/wpa_supplicant.conf\n"
+		  << "\tsleep 3\n"
+		  << "fi\n";
+		F.close();
+
+		F.open("/etc/wpa_supplicant.conf");
+		if(F.is_open()) {
+			F << "# AUTOMATICALLY GENERATED. DO NOT MODIFY.\n"
+			  << "network={\n"
+			  << "\tscan_ssid=1\n"
+			  << "\tssid=\"" << ssid << "\"\n"
+			  << "\tkey_mgmt=WPA-PSK\n"
+			  << "\tproto=" << proto << "\n"
+			  << "\tpairwise=CCMP TKIP\n"
+			  << "\tgroup=CCMP TKIP\n"
+			  << "\tpsk=\"" << key << "\"\n"
+			  << "}\n";
+			F.close();
+		}
 	}
-	out << "# generated by neutrino\n";
-	out << "ctrl_interface=/var/run/wpa_supplicant\n";
-	out << "network={\n";
-	out << "	ssid=\"" + ssid + "\"\n";
-	out << "	psk=\"" + key + "\"\n";;
-	out << "	proto=WPA WPA2\n";
-	out << "	key_mgmt=WPA-PSK\n";
-	out << "	pairwise=CCMP TKIP\n";
-	out << "	group=CCMP TKIP\n";
-	out << "}\n";
 }
