@@ -522,14 +522,6 @@ bool CTZChangeNotifier::changeNotify(const neutrino_locale_t, void * Data)
 		if (symlink(cmd.c_str(), "/etc/localtime"))
 			perror("symlink failed");
 #if 0
-	/* for yocto tzdata compatibility */
-	FILE *f = fopen("/etc/timezone", "w");
-	if (f) {
-		fprintf(f, "%s\n", zone.c_str());
-		fclose(f);
-	}
-#endif
-#if 0
 		cmd = ":" + zone;
 		setenv("TZ", cmd.c_str(), 1);
 #endif

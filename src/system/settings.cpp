@@ -88,7 +88,6 @@ const struct personalize_settings_t personalize_settings[SNeutrinoSettings::P_SE
 	{"personalize_service_scripts"		, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE},
 	{"personalize_softupdate"		, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE},
 	{"personalize_restart"			, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE},
-
 	{"personalize_infomenu_service"		, CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE},
 	{"personalize_boot_spark"		, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE},
 	

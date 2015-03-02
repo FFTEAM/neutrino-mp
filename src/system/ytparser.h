@@ -63,6 +63,7 @@ class cYTVideoInfo
 
 		void Dump();
 		std::string GetUrl(int *fmt = NULL, bool mandatory = true);
+		
 };
 
 typedef std::vector<cYTVideoInfo> yt_video_list_t;

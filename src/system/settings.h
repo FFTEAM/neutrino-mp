@@ -182,6 +182,7 @@ struct SNeutrinoSettings
 	int infobar_show_res;
 	int infobar_show_tuner;
 	int infobar_show_dd_available;
+	int show_background_picture;
 	int wzap_time;
 	//audio
 	int audio_AnalogMode;
@@ -191,6 +192,8 @@ struct SNeutrinoSettings
 	int audio_mixer_volume_spdif;
 	int audio_mixer_volume_hdmi;
 #endif
+	int audio_volume_percent_ac3;
+	int audio_volume_percent_pcm;
 	int auto_lang;
 	int auto_subs;
 	int srs_enable;
@@ -200,9 +203,6 @@ struct SNeutrinoSettings
 	int hdmi_dd;
 	int spdif_dd;
 	int analog_out;
-	int audio_volume_percent_ac3;
-	int audio_volume_percent_pcm;
-
 	//video
 	int video_dbdr;
 	int hdmi_cec_mode;
@@ -266,6 +266,9 @@ struct SNeutrinoSettings
 
 	int epg_enable_freesat;
 	int epg_enable_viasat;
+	std::string streaming_server_url;
+	std::string streaming_server_name;
+	std::list<std::string> webtv_xml;
 #if ENABLE_SHAIRPLAY
 	int shairplay_enabled;
 	int shairplay_port;
@@ -273,16 +276,12 @@ struct SNeutrinoSettings
 	std::string shairplay_apname;
 	std::string shairplay_password;
 #endif
-
 	//network
 	std::string network_ntpserver;
 	std::string network_ntprefresh;
 	int network_ntpenable;
 	std::string ifname;
 
-	std::list<std::string> webtv_xml;
-	std::string streaming_server_url;
-	std::string streaming_server_name;
 #ifdef ENABLE_GRAPHLCD
 	int glcd_enable;
 	uint32_t glcd_color_fg;
@@ -759,8 +758,6 @@ struct SNeutrinoSettings
 	int filebrowser_sortmethod;
 	int filebrowser_denydirectoryleave;
 	int filebrowser_use_filter;
-	int filebrowser_multi_select;
-	int filebrowser_multi_select_confirm_dir;
 
 	//movieplayer
 	int   movieplayer_repeat_on;
