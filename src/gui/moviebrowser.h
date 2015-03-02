@@ -279,7 +279,6 @@ class CMovieBrowser : public CMenuTarget
 
 	private: // Variables
 		CFrameBuffer * framebuffer;
-		CFrameBuffer * m_pcWindow;
 
 		CListFrame* m_pcBrowser;
 		CListFrame* m_pcLastPlay;
@@ -450,6 +449,7 @@ class CMovieBrowser : public CMenuTarget
 
 		///// Menu ////////////////////////////////////
 		bool showMenu(bool calledExternally = false);
+		bool showMenu(MI_MOVIE_INFO* movie_info); // P2
 		int showMovieInfoMenu(MI_MOVIE_INFO* movie_info); // P2
 		int  showStartPosSelectionMenu(void); // P2
 

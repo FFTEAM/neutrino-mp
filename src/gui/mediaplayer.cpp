@@ -219,25 +219,13 @@ int CMediaPlayerMenu::initMenuMedia(CMenuWidget *m, CPersonalizeGui *p)
 		personalize->addItem(media, fw_upnp, &g_settings.personalize[SNeutrinoSettings::P_MEDIA_UPNP]);
 #endif
 
-	//movie browser
-	CMenuForwarder *fw_mbrowser = new CMenuForwarder(LOCALE_MOVIEBROWSER_HEAD, true, NULL, CNeutrinoApp::getInstance(), "tsmoviebrowser");
-	fw_mbrowser->setHint(NEUTRINO_ICON_HINT_MB, LOCALE_MENU_HINT_MB);
-	personalize->addItem(media, fw_mbrowser, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_MBROWSER]);
-	
-	//fileplayback
-	CMenuForwarder *fw_file = new CMenuForwarder(LOCALE_MOVIEPLAYER_FILEPLAYBACK, true, NULL, CNeutrinoApp::getInstance(), "fileplayback");
-	fw_file->setHint(NEUTRINO_ICON_HINT_FILEPLAY, LOCALE_MENU_HINT_FILEPLAY);
-	personalize->addItem(media, fw_file, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_FILEPLAY]);
+		//picture viewer
+		personalize->addItem(media, fw_pviewer, &g_settings.personalize[SNeutrinoSettings::P_MEDIA_PVIEWER]);
 
-	//yt
-	CMenuForwarder *fw_yt = new CMenuForwarder(LOCALE_MOVIEPLAYER_YTPLAYBACK, true, NULL, CNeutrinoApp::getInstance(), "ytplayback");
-	fw_yt->setHint(NEUTRINO_ICON_HINT_YTPLAY, LOCALE_MENU_HINT_YTPLAY);
-	personalize->addItem(media, fw_yt, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_YTPLAY]);
-
-	//netzkino
-	CMenuForwarder *fw_nk = new CMenuForwarder(LOCALE_MOVIEPLAYER_NKPLAYBACK, true, NULL, CNeutrinoApp::getInstance(), "nkplayback");
-	fw_nk->setHint(NEUTRINO_ICON_HINT_NKPLAY, LOCALE_MENU_HINT_NKPLAY);
-	personalize->addItem(media, fw_nk, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_NKPLAY]);
+		if (g_settings.recording_type != CNeutrinoApp::RECORDING_OFF)
+			showMoviePlayer(media, personalize);
+			showNetworkNFSMounts(media, personalize);
+	}
 
 #if ENABLE_SHAIRPLAY
 	//shairplay
@@ -248,15 +236,6 @@ int CMediaPlayerMenu::initMenuMedia(CMenuWidget *m, CPersonalizeGui *p)
 		personalize->addItem(media, fw_shairplay, &g_settings.personalize[SNeutrinoSettings::P_MEDIA_INETPLAY]);
 	}
 #endif
-	
-		//picture viewer
-		personalize->addItem(media, fw_pviewer, &g_settings.personalize[SNeutrinoSettings::P_MEDIA_PVIEWER]);
-
-		if (g_settings.recording_type != CNeutrinoApp::RECORDING_OFF)
-			showMoviePlayer(media, personalize);
-			showNetworkNFSMounts(media, personalize);
-
-	}
 	
 	int res = menu_return::RETURN_NONE;
 	
@@ -303,7 +282,7 @@ void CMediaPlayerMenu::showMoviePlayer(CMenuWidget *moviePlayer, CPersonalizeGui
 	p->addItem(moviePlayer, fw_yt, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_YTPLAY]);
 
 	//netzkino
-	CMenuForwarder *fw_nk = new CMenuForwarder(LOCALE_MOVIEPLAYER_NKPLAYBACK, true, NULL, &CMoviePlayerGui::getInstance(), "nkplayback");
+	CMenuForwarder *fw_nk = new CMenuForwarder(LOCALE_MOVIEPLAYER_NKPLAYBACK, true, NULL, CNeutrinoApp::getInstance(), "nkplayback");
 	fw_nk->setHint(NEUTRINO_ICON_HINT_NKPLAY, LOCALE_MENU_HINT_NKPLAY);
 	p->addItem(moviePlayer, fw_nk, &g_settings.personalize[SNeutrinoSettings::P_MPLAYER_NKPLAY]);
 
