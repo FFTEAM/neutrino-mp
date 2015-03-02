@@ -1611,11 +1611,7 @@ const char * CRCInput::getSpecialKeyName(const unsigned int key)
 			case RC_analog_off:
 				return "analog off";
 			case RC_www:
-#if HAVE_SPARK_HARDWARE
-				return "window print";
-#else
 				return "www";
-#endif
 			case RC_find:
 				return "find";
 			case RC_pip:
@@ -1624,10 +1620,8 @@ const char * CRCInput::getSpecialKeyName(const unsigned int key)
 				return "archive";
 			case RC_slow:
 				return "slow";
-#if 0
 			case RC_fastforward:
 				return "fast";
-#endif
 			case RC_playmode:
 				return "play mode";
 			case RC_usb:
