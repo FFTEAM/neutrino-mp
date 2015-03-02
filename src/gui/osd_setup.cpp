@@ -10,6 +10,9 @@
 	Copyright (C) 2010 T. Graf 'dbt'
 	Homepage: http://www.dbox2-tuning.net/
 
+	Copyright (C) 2010, 2012-2103 Stefan Seyfried
+
+	Copyright (C) 2014 martii
 
 	License: GPL
 
@@ -37,7 +40,6 @@
 #include <neutrino.h>
 #include <mymenu.h>
 #include <neutrino_menue.h>
-#include <cs_api.h>
 
 #include "osd_setup.h"
 #include "themes.h"
@@ -62,8 +64,8 @@
 
 #include <zapit/femanager.h>
 #include <system/debug.h>
+#include <cs_api.h>
 #include <system/helpers.h>
-#include "cs_api.h"
 
 extern CRemoteControl * g_RemoteControl;
 
@@ -399,6 +401,14 @@ const CMenuOptionChooser::keyval INFOBAR_CASYSTEM_MODE_OPTIONS[INFOBAR_CASYSTEM_
 	{ 3, LOCALE_OPTIONS_OFF  }
 };
 
+#define INFOBAR_INFOVIEWERECM_MODE_OPTION_COUNT 3
+const CMenuOptionChooser::keyval INFOBAR_INFOVIEWERECM_MODE_OPTIONS[INFOBAR_INFOVIEWERECM_MODE_OPTION_COUNT] =
+{
+	{ 0, LOCALE_OPTIONS_OFF  },
+	{ 1, LOCALE_MISCSETTINGS_INFOBAR_INFOVIEWERECM_OPTION1 },
+	{ 2, LOCALE_MISCSETTINGS_INFOBAR_INFOVIEWERECM_OPTION2 },
+};
+
 #define SHOW_INFOMENU_MODE_OPTION_COUNT 2
 const CMenuOptionChooser::keyval SHOW_INFOMENU_MODE_OPTIONS[SHOW_INFOMENU_MODE_OPTION_COUNT] =
 {
@@ -423,7 +433,7 @@ const CMenuOptionChooser::keyval  INFOBAR_SUBCHAN_DISP_POS_OPTIONS[INFOBAR_SUBCH
 	{ 4 , LOCALE_INFOVIEWER_SUBCHAN_INFOBAR }
 };
 
-#define VOLUMEBAR_DISP_POS_OPTIONS_COUNT 7
+#define VOLUMEBAR_DISP_POS_OPTIONS_COUNT 8
 const CMenuOptionChooser::keyval  VOLUMEBAR_DISP_POS_OPTIONS[VOLUMEBAR_DISP_POS_OPTIONS_COUNT]=
 {
 	{ CVolumeBar::VOLUMEBAR_POS_TOP_RIGHT    , LOCALE_SETTINGS_POS_TOP_RIGHT },
@@ -432,7 +442,8 @@ const CMenuOptionChooser::keyval  VOLUMEBAR_DISP_POS_OPTIONS[VOLUMEBAR_DISP_POS_
 	{ CVolumeBar::VOLUMEBAR_POS_BOTTOM_RIGHT , LOCALE_SETTINGS_POS_BOTTOM_RIGHT },
 	{ CVolumeBar::VOLUMEBAR_POS_TOP_CENTER   , LOCALE_SETTINGS_POS_TOP_CENTER },
 	{ CVolumeBar::VOLUMEBAR_POS_BOTTOM_CENTER, LOCALE_SETTINGS_POS_BOTTOM_CENTER },
-	{ CVolumeBar::VOLUMEBAR_POS_HIGHER_CENTER, LOCALE_SETTINGS_POS_HIGHER_CENTER }
+	{ CVolumeBar::VOLUMEBAR_POS_HIGHER_CENTER, LOCALE_SETTINGS_POS_HIGHER_CENTER },
+	{ CVolumeBar::VOLUMEBAR_POS_OFF		 , LOCALE_SETTINGS_POS_OFF }
 };
 
 #define MENU_DISP_POS_OPTIONS_COUNT 5
@@ -656,6 +667,8 @@ int COsdSetup::showOsdSetup()
 	mc = new CMenuOptionChooser(LOCALE_INFOVIEWER_SUBCHAN_DISP_POS, &g_settings.infobar_subchan_disp_pos, INFOBAR_SUBCHAN_DISP_POS_OPTIONS, INFOBAR_SUBCHAN_DISP_POS_OPTIONS_COUNT, true);
 	mc->setHint("", LOCALE_MENU_HINT_SUBCHANNEL_POS);
 	osd_menu->addItem(mc);
+
+ 	osd_menu->addItem(new CMenuOptionChooser(LOCALE_OPTIONS_SHOW_BACKGROUND_PICTURE, &g_settings.show_background_picture, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 
 	int oldVolumeSize = g_settings.volume_size;
 	int oldInfoClockSize = g_settings.infoClockFontSize;
@@ -978,6 +991,11 @@ void COsdSetup::showOsdInfobarSetup(CMenuWidget *menu_infobar)
 	// Dotmatrix
 	mc = new CMenuOptionChooser(LOCALE_MISCSETTINGS_INFOBAR_DOTMATRIX_DISPLAY, &g_settings.dotmatrix, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true);
 	mc->setHint("", LOCALE_MENU_HINT_INFOBAR_DOTMATRIX);
+	menu_infobar->addItem(mc);
+
+	// Infoviewer
+	mc = new CMenuOptionChooser(LOCALE_MISCSETTINGS_INFOBAR_INFOVIEWERECM_DISPLAY, &g_settings.infoviewer_ecm_info, INFOBAR_INFOVIEWERECM_MODE_OPTIONS, INFOBAR_INFOVIEWERECM_MODE_OPTION_COUNT, true, this);
+	mc->setHint("", LOCALE_MENU_HINT_INFOBAR_INFOVIEWERECM);
 	menu_infobar->addItem(mc);
 
 	// logo

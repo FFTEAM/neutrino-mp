@@ -673,14 +673,6 @@ int CTestMenu::exec(CMenuTarget* parent, const std::string &actionKey)
 #endif
 		return res;
 	}
-	else if (actionKey == "window_close"){
-		if (window){
-			window->hide();
-			delete window;
-			window = NULL;
-		}
-		return res;
-	}
 	else if (actionKey == "running_clock"){	
 		if (clock_r == NULL){
 			clock_r = new CComponentsFrmClock(100, 50, 0, 50, "%H.%M:%S", true);
@@ -796,7 +788,6 @@ void CTestMenu::showCCTests(CMenuWidget *widget)
 	widget->addItem(new CMenuForwarder("Footer", true, NULL, this, "footer"));
 	widget->addItem(new CMenuForwarder("Icon-Form", true, NULL, this, "iconform"));
 	widget->addItem(new CMenuForwarder("Window", true, NULL, this, "window"));
-	widget->addItem(new CMenuForwarder("Window-Close", true, NULL, this, "window_close"));
 	widget->addItem(new CMenuForwarder("Text-Extended", true, NULL, this, "text_ext"));
 	widget->addItem(new CMenuForwarder("Scrollbar", true, NULL, this, "scrollbar"));
 }
@@ -837,6 +828,8 @@ void CTestMenu::showHWTests(CMenuWidget *widget)
 
 			satellite_map_t satmap = CServiceManager::getInstance()->SatelliteList();
 			satmap[test_pos[i]].configured = 1;
+			satmap[test_pos[i]].lnbOffsetLow = 5150;
+			satmap[test_pos[i]].lnbOffsetHigh = 5150;
 			frontend->setSatellites(satmap);
 			if (i == 0) {
 				widget->addItem(new CMenuForwarder("Tuner 1: 22 Khz ON", true, NULL, this, "22kon0"));
