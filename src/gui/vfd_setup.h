@@ -31,10 +31,6 @@
 #ifndef __lcd_setup__
 #define __lcd_setup__
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <gui/widget/menue.h>
 #include <gui/widget/stringinput.h>
 
