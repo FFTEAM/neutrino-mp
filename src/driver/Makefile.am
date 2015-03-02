@@ -31,6 +31,7 @@ libneutrino_driver_a_SOURCES = \
 	fontrenderer.cpp \
 	framebuffer_ng.cpp \
 	genpsi.cpp \
+	moviecut.cpp \
 	neutrinofonts.cpp \
 	radiotext.cpp \
 	radiotools.cpp \
@@ -52,6 +53,7 @@ if ENABLE_SHAIRPLAY
 libneutrino_driver_a_SOURCES += \
 	shairplay.cpp
 endif
+
 if BOXTYPE_DUCKBOX
 libneutrino_driver_a_SOURCES += \
 	vfd.cpp

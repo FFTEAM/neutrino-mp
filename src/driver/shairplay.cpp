@@ -487,7 +487,9 @@ void CShairPlay::unlock(pthread_mutex_t *_m)
 
 void CShairPlay::exec(void)
 {
+#if 0
 	CVFD::getInstance()->setAudioMode(AUDIO_FMT_MP3);
+#endif
 	g_Zapit->lockPlayBack();
 
 	showingCoverArt = false;
@@ -597,5 +599,7 @@ void CShairPlay::exec(void)
 	firstAudioPacket = true;
 	unlock(&videoMutex);
 	g_Zapit->Rezap();
+#if 0
 	CVFD::getInstance()->setAudioMode();
+#endif
 }

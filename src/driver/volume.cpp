@@ -4,6 +4,7 @@
 
 	volume bar - Neutrino-GUI
 	Copyright (C) 2011-2013 M. Liebmann (micha-bbg)
+	Copyright (C) 2012,2013 Stefan Seyfried
 
 	License: GPL
 
@@ -31,6 +32,7 @@
 #include <gui/infoclock.h>
 #include <gui/keybind_setup.h>
 #include <system/debug.h>
+/* compat header from zapit/include */
 #include <audio.h>
 #include <system/settings.h>
 #include <system/helpers.h>
@@ -46,6 +48,7 @@
 
 
 #define VOLUME_SCRIPT	CONFIGDIR "/volume.sh"
+
 extern CRemoteControl * g_RemoteControl;
 extern cAudio * audioDecoder;
 
@@ -59,7 +62,7 @@ CVolume::CVolume()
 	mute_dy		= 0;
 	m_mode 		= CNeutrinoApp::getInstance()->getMode();
 	channel_id	= 0;
-	apid		= 0;
+	apid		= -1;
 }
 
 CVolume::~CVolume()
@@ -91,7 +94,10 @@ void CVolume::setVolumeExt(int vol)
 
 void CVolume::setVolume(const neutrino_msg_t key)
 {
+	if (!g_RCInput) /* don't die... */
+		return;
 	neutrino_msg_t msg	= key;
+	static bool do_vol = true; /* false if volume is handled by external script */
 	int mode = CNeutrinoApp::getInstance()->getMode();
 	
 	if (msg <= CRCInput::RC_MaxRC) {
@@ -103,7 +109,8 @@ void CVolume::setVolume(const neutrino_msg_t key)
 	}
 
 	hideVolscale();
-	showVolscale();
+	if (g_settings.volume_pos !=  CVolumeBar::VOLUMEBAR_POS_OFF)
+		showVolscale();
 
 	neutrino_msg_data_t data;
 	uint64_t timeoutEnd;
@@ -117,14 +124,27 @@ void CVolume::setVolume(const neutrino_msg_t key)
 			if ((msg == (neutrino_msg_t) g_settings.key_volumeup || msg == (neutrino_msg_t) g_settings.key_volumedown) ||
 			    (sub_chan_keybind && (msg == CRCInput::RC_right || msg == CRCInput::RC_left))) {
 				int dir = (msg == (neutrino_msg_t) g_settings.key_volumeup || msg == CRCInput::RC_right) ? 1 : -1;
+				if (my_system(2, VOLUME_SCRIPT, dir > 0 ? "up" : "down") == 0)
+				{
+					do_vol = false;
+					/* clear all repeated events */
+					neutrino_msg_t tmp = msg;
+					while (msg == tmp)
+						g_RCInput->getMsg(&tmp, &data, 0);
+					if (tmp != CRCInput::RC_timeout)
+						g_RCInput->postMsg(tmp, data);
+				} else
+					do_vol = true;
 				if (CNeutrinoApp::getInstance()->isMuted() && (dir > 0 || g_settings.current_volume > 0)) {
 					hideVolscale();
-					CAudioMute::getInstance()->AudioMute(false, true);
-					setVolume(msg);
-					return;
+					if (do_vol) {
+						CAudioMute::getInstance()->AudioMute(false, true);
+						setVolume(msg);
+						return;
+					}
 				}
 
-				if (!CNeutrinoApp::getInstance()->isMuted()) {
+				if (do_vol && !CNeutrinoApp::getInstance()->isMuted()) {
 					/* current_volume is char, we need signed to catch v < 0 */
 					int v = g_settings.current_volume;
 					v += dir * g_settings.current_volume_step;
@@ -167,7 +187,8 @@ void CVolume::setVolume(const neutrino_msg_t key)
 		if (volscale) {
 			if(vol != g_settings.current_volume) {
 				vol = g_settings.current_volume;
-				volscale->repaintVolScale();
+				if (g_settings.volume_pos !=  CVolumeBar::VOLUMEBAR_POS_OFF)
+					volscale->repaintVolScale();
 			}
 		}
 

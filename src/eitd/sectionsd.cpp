@@ -94,6 +94,7 @@ static int scanning = 1;
 
 extern bool epg_filter_is_whitelist;
 extern bool epg_filter_except_current_next;
+static bool xml_epg_filter;
 
 static bool messaging_zap_detected = false;
 /*static*/ bool dvb_time_update = false;
@@ -101,7 +102,7 @@ static bool messaging_zap_detected = false;
 //NTP-Config
 #define CONF_FILE CONFIGDIR "/neutrino.conf"
 
-std::string ntp_system_cmd_prefix = "/usr/sbin/rdate -s "; // from busybox
+std::string ntp_system_cmd_prefix = "ntpdate ";
 
 std::string ntp_system_cmd;
 std::string ntpserver;
@@ -133,6 +134,10 @@ OpenThreads::Mutex filter_mutex;
 static CTimeThread threadTIME;
 static CEitThread threadEIT;
 static CCNThread threadCN;
+#ifdef ENABLE_VIASATEPG
+// ViaSAT uses pid 0x39 instead of 0x12
+static CEitThread threadVSEIT("viasatThread", 0x39);
+#endif
 
 #ifdef ENABLE_FREESATEPG
 static CFreeSatThread threadFSEIT;
@@ -837,6 +842,9 @@ static void wakeupAll()
 #ifdef ENABLE_FREESATEPG
 	threadFSEIT.change(0);
 #endif
+#ifdef ENABLE_VIASATEPG
+	threadVSEIT.change(0);
+#endif
 #ifdef ENABLE_SDT
 	threadSDT.change(0);
 #endif
@@ -959,6 +967,9 @@ static void commandserviceChanged(int connfd, char *data, const unsigned dataLen
 #ifdef ENABLE_FREESATEPG
 		threadFSEIT.setCurrentService(messaging_current_servicekey);
 #endif
+#ifdef ENABLE_VIASATEPG
+		threadVSEIT.setCurrentService(messaging_current_servicekey);
+#endif
 #ifdef ENABLE_SDT
 		threadSDT.setCurrentService(messaging_current_servicekey);
 #endif
@@ -1041,6 +1052,9 @@ static void commandDumpStatusInformation(int /*connfd*/, char* /*data*/, const u
 		 "Number of cached nvod-events: %u\n"
 		 "Number of cached meta-services: %u\n"
 		 //    "Resource-usage: maxrss: %ld ixrss: %ld idrss: %ld isrss: %ld\n"
+#ifdef ENABLE_VIASATEPG
+		 "ViaSat enabled\n"
+#endif
 #ifdef ENABLE_FREESATEPG
 		 "FreeSat enabled\n"
 #else
@@ -1736,6 +1750,12 @@ CEitThread::CEitThread()
 	: CEventsThread("eitThread")
 {
 }
+#ifdef ENABLE_VIASATEPG
+CEitThread::CEitThread(std::string tname, unsigned short pid)
+	: CEventsThread(tname, pid)
+{
+}
+#endif
 
 /* EIT thread hooks */
 void CEitThread::addFilters()
@@ -1770,7 +1790,7 @@ void CEitThread::beforeSleep()
 				&current_service,
 				sizeof(messaging_current_servicekey));
 	}
-	if(notify_complete)
+	if(notify_complete && !access(CONFIGDIR "/epgdone.sh", X_OK))
 		system(CONFIGDIR "/epgdone.sh");
 }
 
@@ -2183,7 +2203,7 @@ bool CEitManager::Start()
 		config.epg_cache, config.epg_extendedcache, config.epg_max_events, config.epg_old_events);
 	printf("[sectionsd] NTP: %s, server %s, command %s\n", ntpenable ? "enabled" : "disabled", ntpserver.c_str(), ntp_system_cmd_prefix.c_str());
 
-	readEPGFilter();
+	xml_epg_filter = readEPGFilter();
 
 	if (!sectionsd_server.prepare(SECTIONSD_UDS_NAME)) {
 		fprintf(stderr, "[sectionsd] failed to prepare basic server\n");
@@ -2230,6 +2250,7 @@ printf("SIevent size: %d\n", (int)sizeof(SIevent));
 
 	tzset(); // TZ auswerten
 
+	readEPGFilter();
 	readDVBTimeFilter();
 	readEncodingFile();
 
@@ -2240,6 +2261,9 @@ printf("SIevent size: %d\n", (int)sizeof(SIevent));
 
 #ifdef ENABLE_FREESATEPG
 	threadFSEIT.Start();
+#endif
+#ifdef ENABLE_VIASATEPG
+	threadVSEIT.Start();
 #endif
 #ifdef ENABLE_SDT
 	threadSDT.Start();
@@ -2281,6 +2305,9 @@ printf("SIevent size: %d\n", (int)sizeof(SIevent));
 #ifdef ENABLE_FREESATEPG
 	threadFSEIT.StopRun();
 #endif
+#ifdef ENABLE_VIASATEPG
+	threadVSEIT.StopRun();
+#endif
 
 	xprintf("broadcasting...\n");
 
@@ -2311,6 +2338,10 @@ printf("SIevent size: %d\n", (int)sizeof(SIevent));
 #ifdef ENABLE_FREESATEPG
 	xprintf("join FSEIT\n");
 	threadFSEIT.Stop();
+#endif
+#ifdef ENABLE_VIASATEPG
+	xprintf("join VSEIT\n");
+	threadVSEIT.Stop();
 #endif
 #ifdef EXIT_CLEANUP
 	xprintf("[sectionsd] cleanup...\n");
@@ -2940,6 +2971,8 @@ unsigned CEitManager::getEventsCount()
 void CEitManager::addChannelFilter(t_original_network_id onid, t_transport_stream_id tsid, t_service_id sid)
 {
 	OpenThreads::ScopedLock<OpenThreads::Mutex> slock(filter_mutex);
+	if (xml_epg_filter)
+		return;
 	epg_filter_except_current_next = true;
 	epg_filter_is_whitelist = true;
 	addEPGFilter(onid, tsid, sid);
@@ -2948,6 +2981,8 @@ void CEitManager::addChannelFilter(t_original_network_id onid, t_transport_strea
 void CEitManager::clearChannelFilters()
 {
 	OpenThreads::ScopedLock<OpenThreads::Mutex> slock(filter_mutex);
+	if (xml_epg_filter)
+		return;
 	clearEPGFilter();
 	epg_filter_is_whitelist = false;
 }
