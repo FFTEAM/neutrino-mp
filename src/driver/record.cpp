@@ -196,7 +196,9 @@ record_error_msg_t CRecordInstance::Start(CZapitChannel * channel)
 		if (numpids >= REC_MAX_APIDS)
 			break;
 	}
+	bool StreamPAT = false;
 	if ((StreamVTxtPid) && (allpids.PIDs.vtxtpid != 0) && (numpids < REC_MAX_APIDS)){
+		StreamPmtPid = true;
 		apids[numpids++] = allpids.PIDs.vtxtpid;
 		psi.addPid(allpids.PIDs.vtxtpid, EN_TYPE_TELTEX, 0, channel->getTeletextLang());
 	}
@@ -209,6 +211,7 @@ record_error_msg_t CRecordInstance::Start(CZapitChannel * channel)
 				if (numpids >= REC_MAX_APIDS)
 					break;
 
+				StreamPmtPid = true;
 				CZapitDVBSub* sd = reinterpret_cast<CZapitDVBSub*>(s);
 				apids[numpids++] = sd->pId;
 				psi.addPid( sd->pId, EN_TYPE_DVBSUB, 0, sd->ISO639_language_code.c_str() );
@@ -216,12 +219,13 @@ record_error_msg_t CRecordInstance::Start(CZapitChannel * channel)
 		}
 
 	}
-	psi.genpsi(fd);
 
-#if 0
-	if ((StreamPmtPid) && (allpids.PIDs.pmtpid != 0) && (numpids < REC_MAX_APIDS))
+	if ((StreamPmtPid) && (allpids.PIDs.pmtpid != 0) && numpids < REC_MAX_APIDS)
+		StreamPAT = true,
 		apids[numpids++] = allpids.PIDs.pmtpid;
-#endif
+	if (StreamPAT && numpids < REC_MAX_APIDS)
+		apids[numpids++] = 0;
+	psi.genpsi(fd);
 
 #if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE
 	if(record == NULL) {
@@ -1437,14 +1441,12 @@ bool CRecordManager::ShowMenu(void)
 	//bool status_rec		= rec_mode & RECMODE_REC;
 
 	//record item
-	iteml = new CMenuForwarder(LOCALE_RECORDINGMENU_MULTIMENU_REC_AKT, true /*!status_rec*/, NULL,
-			this, "Record", CRCInput::RC_red);
+	iteml = new CMenuForwarder(LOCALE_RECORDINGMENU_MULTIMENU_REC_AKT, true /*!status_rec*/, NULL, this, "Record", CRCInput::RC_red);
 	//if no recordings are running, set the focus to the record menu item
 	menu.addItem(iteml, rec_count == 0 ? true: false);
 
 	//timeshift item
-	iteml = new CMenuForwarder(LOCALE_RECORDINGMENU_MULTIMENU_TIMESHIFT, !status_ts, NULL,
-			this, "Timeshift", CRCInput::RC_yellow);
+	iteml = new CMenuForwarder(LOCALE_RECORDINGMENU_MULTIMENU_TIMESHIFT, !status_ts, NULL, this, "Timeshift", CRCInput::RC_yellow);
 	menu.addItem(iteml, false);
 
 	if(rec_count > 0)
