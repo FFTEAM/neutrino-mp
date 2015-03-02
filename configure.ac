@@ -3,6 +3,7 @@ AM_INIT_AUTOMAKE([1.0.1 nostdinc])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 
 TUXBOX_APPS
+TUXBOX_APPS_DVB
 TUXBOX_APPS_DIRECTORY
 TUXBOX_APPS_PKGCONFIG
 TUXBOX_BOXTYPE
@@ -34,7 +35,6 @@ if ! diff local_build_config.h.tmp local_build_config.h >/dev/null 2>&1; then
 else
 	rm -f local_build_config.h.tmp
 fi
-
 
 AC_ARG_ENABLE(ffmpegdec,
 	AS_HELP_STRING(--enable-ffmpegdec,include ffmpeg decoder support),
@@ -94,14 +94,27 @@ if test "$BOXTYPE" = "tripledragon"; then
 fi
 
 AM_CONDITIONAL(USE_TREMOR, test "$TREMOR" = "yes")
-TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
-TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+
+# TUXBOX_APPS_LIB_PKGCONFIG(OPENSSL,openssl)
+TUXBOX_APPS_LIB_PKGCONFIG(CURL,libcurl)
+TUXBOX_APPS_LIB_PKGCONFIG(FREETYPE,freetype2)
+# fallback to curl-config (which is ugly for cross-compilation)
+if test -z "$CURL_LIBS" -a -z "$CURL_CFLAGS"; then
+	TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
+fi
+# fallback to freetype-config (which is ugly for cross-compilation)
+if test -z "$FREETYPE_LIBS" -a -z "$FREETYPE_CFLAGS"; then
+	TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
+fi
 
 TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
 TUXBOX_APPS_LIB_PKGCONFIG(AVFORMAT,libavformat)
 TUXBOX_APPS_LIB_PKGCONFIG(AVCODEC,libavcodec)
 TUXBOX_APPS_LIB_PKGCONFIG(AVUTIL,libavutil)
-TUXBOX_APPS_LIB_PKGCONFIG(SWRESAMPLE,libswresample)
+if test "$BOXTYPE" = "coolstream"; then
+	TUXBOX_APPS_LIB_PKGCONFIG(BLURAY,libbluray)
+fi
+
 # either use dynamic lualib in package lua (openSUSE)
 # ... or in package lua5.2 (debian-derivates)
 # ... and if all fails, assume it is in the linker path (cross build)
@@ -113,7 +126,6 @@ PKG_CHECK_MODULES([LUA], [lua >= 5.2], echo "lua >= 5.2 found", [
 	])
 ])
 
-TUXBOX_APPS_LIB_PKGCONFIG(BLURAY,libbluray)
 TUXBOX_APPS_LIB_PKGCONFIG(SIGC,sigc++-2.0)
 
 #TUXBOX_APPS_LIB_PKGCONFIG(CONFIGFILE,tuxbox-configfile)
