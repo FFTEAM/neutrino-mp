@@ -261,6 +261,7 @@ CFSMounter::MountRes CFSMounter::mount(const std::string &ip, const std::string 
 		cmd += username;
 		cmd += ",password=";
 		cmd += password;
+		cmd += ",iocharset=utf8";
 		//cmd += ",unc=//"; for whats needed?
 		//cmd += ip;
 		//cmd += '/';
@@ -328,6 +329,28 @@ bool CFSMounter::automount()
 		}
 	}
 	return res;
+}
+
+static pthread_t automount_threadid = 0;
+
+void *CFSMounter::automount_thread(void *)
+{
+	CFSMounter::automount();
+	pthread_exit(NULL);
+}
+
+void CFSMounter::automount_async_start()
+{
+	if (!automount_threadid)
+		pthread_create(&automount_threadid, 0, automount_thread, NULL);
+}
+
+void CFSMounter::automount_async_stop()
+{
+	if (automount_threadid) {
+		pthread_join(automount_threadid, NULL);
+		automount_threadid = 0;
+	}
 }
 
 CFSMounter::UMountRes CFSMounter::umount(const char * const dir)
