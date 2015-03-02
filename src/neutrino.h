@@ -38,6 +38,7 @@
 #include <configfile.h>
 
 #include <neutrinoMessages.h>
+#include "driver/neutrinofonts.h"
 #include "system/setting_helpers.h"
 #include "system/configure_network.h"
 #include "daemonc/remotecontrol.h"    /* st_rmsg      */
@@ -46,8 +47,11 @@
 #include "gui/rc_lock.h"
 #include "gui/user_menue.h"
 #include <timerdclient/timerdtypes.h>
+#include "gui/timerlist.h"
 
 #include <string>
+// Forward declarations instead of includes:
+class CShairPlay;
 
 #define ANNOUNCETIME (1 * 60)
 
@@ -63,7 +67,7 @@ extern const neutrino_locale_t * genre_sub_classes_list[]; /* epgview.cpp */
 class CFrameBuffer;
 class CConfigFile;
 class CScanSettings;
-class CShairPlay;
+
 class CNeutrinoApp : public CMenuTarget, CChangeObserver
 {
 public:
@@ -83,7 +87,6 @@ private:
 	CConfigFile			configfile;
 	CScanSettings			scanSettings;
 	CPersonalizeGui			personalize;
-	CUserMenu 			usermenu;
 	int                             network_dhcp;
 	int                             network_automatic_start;
 	CMenuWidget			*mainMenu;
@@ -104,6 +107,7 @@ private:
 	bool 				skipSleepTimer;
 	bool                            lockStandbyCall;
 	bool 				pbBlinkChange;
+	bool				g_channel_list_changed;
 	bool				channels_changed;
 	bool				favorites_changed;
 	bool				bouquets_changed;
@@ -124,9 +128,7 @@ private:
 	void standbyMode( bool bOnOff, bool fromDeepStandby = false );
 	void getAnnounceEpgName(CTimerd::RecordingInfo * eventinfo, std::string &name);
 
-#if !HAVE_SPARK_HARDWARE && !HAVE_DUCKBOX_HARDWARE
 	void ExitRun(const bool write_si = true, int retcode = 0);
-#endif
 	void RealRun(CMenuWidget &mainSettings);
 	void InitZapper();
 	void InitTimerdClient();
@@ -161,6 +163,8 @@ public:
 		mode_mask = 0xFF,
 		norezap = 0x100
 	};
+
+	CUserMenu 			usermenu;
 
 	void saveSetup(const char * fname);
 	int loadSetup(const char * fname);
@@ -216,6 +220,7 @@ public:
 		return lastChannelMode;
 	};
 	void SetChannelMode(int mode);
+	void MarkChannelListChanged(void) { g_channel_list_changed = true; };
 	void MarkChannelsChanged(void) { channels_changed = true; };
 	void MarkFavoritesChanged(void) { favorites_changed = true; };
 	void MarkBouquetsChanged(void) { bouquets_changed = true; };
@@ -229,7 +234,6 @@ public:
 	void showInfo(void);
 	CConfigFile* getConfigFile() {return &configfile;};
 	bool 		SDTreloadChannels;
-
 	void saveEpg(bool cvfd_mode);
 	void stopDaemonsForFlash();
 	int showChannelList(const neutrino_msg_t msg, bool from_menu = false);
@@ -240,13 +244,6 @@ public:
 
 	bool getChannellistIsVisible() { return channellist_visible; }
 	void zapTo(t_channel_id channel_id);
-#if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE
-	enum {
-		SHUTDOWN,
-		REBOOT
-	};
-	void ExitRun(const bool write_si = true, int retcode = SHUTDOWN);
-#endif
 	bool wakeupFromStandby(void);
 	void standbyToStandby(void);
 	void lockPlayBack(bool blank = true);

@@ -181,3 +181,9 @@ neutrino_LDADD += \
 	@AVUTIL_LIBS@ \
 	@AVCODEC_LIBS@ \
 	@SWRESAMPLE_LIBS@
+
+if BOXMODEL_RASPI
+neutrino_LDADD += \
+	-L/opt/vc/lib/ -lbcm_host -lvcos -lvchiq_arm -lpthread -lrt
+endif
+

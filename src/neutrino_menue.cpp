@@ -5,13 +5,7 @@
 							 and some other guys
 	Homepage: http://dbox.cyberphoria.org/
 
-	Kommentar:
-
-	Diese GUI wurde von Grund auf neu programmiert und sollte nun vom
-	Aufbau und auch den Ausbaumoeglichkeiten gut aussehen. Neutrino basiert
-	auf der Client-Server Idee, diese GUI ist also von der direkten DBox-
-	Steuerung getrennt. Diese wird dann von Daemons uebernommen.
-
+	Copyright (C) 2009-2014 Stefan Seyfried
 
 	License: GPL
 
@@ -76,7 +70,7 @@
 #include "gui/timerlist.h"
 #include "gui/update_menue.h"
 #include "gui/streaminfo2.h"
-#ifdef ENABLE_TESTING
+#ifdef ENABLE_TEST_MENU
 #include "gui/test_menu.h"
 #endif
 #include "gui/update.h"
@@ -93,7 +87,6 @@ extern CRemoteControl * g_RemoteControl;
 #if !HAVE_SPARK_HARDWARE
 extern CCAMMenuHandler * g_CamHandler;
 #endif
-// extern bool has_hdd;
 // extern char current_timezone[50];
 // extern bool autoshift;
 
@@ -102,7 +95,7 @@ enum
 	MENU_MAIN,
 	MENU_SETTINGS,
 	MENU_SERVICE,
-//	MENU_SHUTDOWN,
+	MENU_SHUTDOWN,
 
 	MENU_MAX //3
 };
@@ -113,8 +106,8 @@ const mn_widget_struct_t menu_widgets[MENU_MAX] =
 {
 	{LOCALE_MAINMENU_HEAD, 		NEUTRINO_ICON_MAINMENU, 	MENU_WIDTH},	/* 0 = MENU_MAIN*/
 	{LOCALE_MAINSETTINGS_HEAD, 	NEUTRINO_ICON_SETTINGS, 	MENU_WIDTH},	/* 1 = MENU_SETTINGS*/
-	{LOCALE_SERVICEMENU_HEAD,	NEUTRINO_ICON_SETTINGS, 	MENU_WIDTH} 	/* 2 = MENU_SERVICE*/
-//	{LOCALE_MAINMENU_SHUTDOWN_MENU,	NEUTRINO_ICON_BUTTON_POWER, 	MENU_WIDTH}, 	/* 3 = MENU_SHUTDOWN*/
+	{LOCALE_SERVICEMENU_HEAD,	NEUTRINO_ICON_SETTINGS, 	MENU_WIDTH}, 	/* 2 = MENU_SERVICE*/
+	{LOCALE_MAINMENU_SHUTDOWN_MENU,	NEUTRINO_ICON_BUTTON_POWER, 	MENU_WIDTH} 	/* 3 = MENU_SHUTDOWN*/
 };
 
 //init all menues
@@ -156,7 +149,6 @@ void CNeutrinoApp::InitMenuMain()
 	// Dynamic renumbering
 	personalize.setShortcut();
 
-	CMenuWidget &menu = personalize.getWidget(MENU_MAIN)/**main**/;
 
 	//top
 	personalize.addItem(MENU_MAIN, GenericMenuSeparator, NULL, false, CPersonalizeGui::PERSONALIZE_SHOW_NO);
@@ -178,6 +170,7 @@ void CNeutrinoApp::InitMenuMain()
 	radioswitch->setHint(NEUTRINO_ICON_HINT_RADIOMODE, LOCALE_MENU_HINT_RADIOMODE);
 	personalize.addItem(MENU_MAIN, radioswitch, &g_settings.personalize[SNeutrinoSettings::P_MAIN_RADIO_MODE], false, CPersonalizeGui::PERSONALIZE_SHOW_AS_ITEM_OPTION, tvradio_switch); //observed
 
+
 	//timer
 	CMenuForwarder *timerlist = new CMenuForwarder(LOCALE_TIMERLIST_NAME, true, NULL, new CTimerList(), NULL, CRCInput::RC_yellow);
 	timerlist->setHint(NEUTRINO_ICON_HINT_TIMERS, LOCALE_MENU_HINT_TIMERS);
@@ -189,6 +182,7 @@ void CNeutrinoApp::InitMenuMain()
 	personalize.addItem(MENU_MAIN, media, &g_settings.personalize[SNeutrinoSettings::P_MAIN_MEDIA]);
 
 	CMenuForwarder * mf;
+
 	//lua
 	bool show_lua = g_PluginList->hasPlugin(CPlugins::P_TYPE_LUA);
 	mf = new CMenuForwarder(LOCALE_MAINMENU_LUA, show_lua, NULL, new CPluginList(LOCALE_MAINMENU_LUA,CPlugins::P_TYPE_LUA));
@@ -212,6 +206,7 @@ void CNeutrinoApp::InitMenuMain()
 	mf = new CMenuForwarder(LOCALE_MAINMENU_GAMES, show_games, NULL, new CPluginList(LOCALE_MAINMENU_GAMES,CPlugins::P_TYPE_GAME));
 	mf->setHint(NEUTRINO_ICON_HINT_GAMES, LOCALE_MENU_HINT_GAMES);
 	personalize.addItem(MENU_MAIN, mf, &g_settings.personalize[SNeutrinoSettings::P_MAIN_GAMES]);
+
 
 	//separator
 	personalize.addSeparator(MENU_MAIN);
@@ -245,7 +240,8 @@ void CNeutrinoApp::InitMenuMain()
 	personalize.addItem(MENU_MAIN, mf, &g_settings.personalize[SNeutrinoSettings::P_MAIN_SLEEPTIMER]);
 
 	//reboot
-	mf = new CMenuForwarder(LOCALE_MAINMENU_REBOOT, true, NULL, this, "reboot");
+	mf = new CMenuForwarder(LOCALE_MAINMENU_REBOOT, true, NULL, this, "reboot",
+		(g_settings.longkeypress_duration == LONGKEYPRESS_OFF) ? (unsigned long)CRCInput::RC_nokey : (CRCInput::RC_standby | CRCInput::RC_Repeat));
 	mf->setHint(NEUTRINO_ICON_HINT_REBOOT, LOCALE_MENU_HINT_REBOOT);
 	personalize.addItem(MENU_MAIN, mf, &g_settings.personalize[SNeutrinoSettings::P_MAIN_REBOOT]);
 
@@ -296,8 +292,7 @@ void CNeutrinoApp::InitMenuSettings()
 	static int show = CPersonalizeGui::PERSONALIZE_MODE_VISIBLE;
 	//***************************************************************************************************
 	// save
-	CMenuForwarder * mf;
-	mf = new CMenuForwarder(LOCALE_MAINSETTINGS_SAVESETTINGSNOW, true, NULL, this, "savesettings", CRCInput::RC_red);
+	CMenuForwarder * mf = new CMenuForwarder(LOCALE_MAINSETTINGS_SAVESETTINGSNOW, true, NULL, this, "savesettings", CRCInput::RC_red);
 	mf->setHint(NEUTRINO_ICON_HINT_SAVE_SETTINGS, LOCALE_MENU_HINT_SAVE_SETTINGS);
 	personalize.addItem(MENU_SETTINGS, mf, &show, false, CPersonalizeGui::PERSONALIZE_SHOW_NO);
 
@@ -361,9 +356,11 @@ void CNeutrinoApp::InitMenuSettings()
 	personalize.addItem(MENU_SETTINGS, mf, &g_settings.personalize[SNeutrinoSettings::P_MSET_OSD]);
 
 	// lcd
-	mf = new CMenuForwarder(LOCALE_MAINSETTINGS_LCD, true, NULL, new CVfdSetup());
-	mf->setHint(NEUTRINO_ICON_HINT_VFD, LOCALE_MENU_HINT_VFD);
-	personalize.addItem(MENU_SETTINGS, mf, &g_settings.personalize[SNeutrinoSettings::P_MSET_VFD]);
+	if (CVFD::getInstance()->has_lcd) {
+		mf = new CMenuForwarder(LOCALE_MAINSETTINGS_LCD, true, NULL, new CVfdSetup());
+		mf->setHint(NEUTRINO_ICON_HINT_VFD, LOCALE_MENU_HINT_VFD);
+		personalize.addItem(MENU_SETTINGS, mf, &g_settings.personalize[SNeutrinoSettings::P_MSET_VFD]);
+	}
 
 	// drive settings
 	if (g_settings.recording_type != CNeutrinoApp::RECORDING_OFF) {

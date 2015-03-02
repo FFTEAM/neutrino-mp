@@ -39,10 +39,8 @@
 /* if you want use HAVE_XX_HARDWARE, better include config.h :-) */
 #include "config.h"
 
-#if defined(HAVE_DBOX_HARDWARE)
+#ifdef HAVE_DBOX_HARDWARE
 #define EVENTDEV "/dev/input/event0"
-#elif defined (HAVE_COOL_HARDWARE)
-#define EVENTDEV "/dev/input/input0"
 #else
 /* dreambox and tripledragon do not use a "normal" input device, so we cannot
    (ab-)use the event repeating function of it. use the neutrino socket instead. */
@@ -75,7 +73,7 @@ enum initiators
 void usage(char *n){
 	unsigned int keynum = sizeof(keyname)/sizeof(struct key);
 	unsigned int i;
-#if defined (EVENTDEV)
+#ifdef HAVE_DBOX_HARDWARE
 	printf ("rcsim v1.1\nUsage: %s <keyname> [<time>] [<repeat>]\n"
 		"    <keyname> is an excerpt of the 'KEY_FOO'-names in <driver/rcinput.h>,\n"
 		"    <time>    is how long a code is repeatedly sent,\n"
@@ -104,7 +102,7 @@ void usage(char *n){
 
 /* we could also use the neutrino socket on the dbox, but this needs more testing.
    so leave it as is for now */
-#if defined (EVENTDEV)
+#ifdef HAVE_DBOX_HARDWARE
 int push(int ev, unsigned int code, unsigned int value)
 {
 	struct input_event iev;
@@ -216,7 +214,7 @@ int main (int argc, char **argv){
 		rctime=(atol (argv[2])*1000)/reptime;
 	}
 
-#if defined (EVENTDEV)
+#ifdef HAVE_DBOX_HARDWARE
 	evd=open (EVENTDEV,O_RDWR);
 	if (evd<0){
 		perror ("opening event0 failed");
@@ -247,4 +245,3 @@ int main (int argc, char **argv){
 	close (evd);
 	return 0;
 }
-
