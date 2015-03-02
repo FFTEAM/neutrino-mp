@@ -26,6 +26,10 @@
 #ifndef __lcdd__
 #define __lcdd__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <system/settings.h>
 #include <audio_td.h>
 
@@ -64,6 +68,8 @@ typedef enum
 	FP_ICON_CAM1       = 0x0B000001,
 	FP_ICON_COL2       = 0x0B000002,
 	FP_ICON_CAM2       = 0x0C000001,
+	FP_ICON_RECORD,
+	FP_ICON_DOWNLOAD,
 	FP_ICON_CLOCK,
 	FP_ICON_FR,
 	FP_ICON_FF,
@@ -72,7 +78,7 @@ typedef enum
 } fp_icon;
 #define CVFD CLCD
 
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 typedef enum
 {
 	SPARK_PLAY_FASTBACKWARD = 1,
@@ -111,9 +117,6 @@ typedef enum
 #endif
 
 #ifdef LCD_UPDATE
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 // TODO Why is USE_FILE_OFFSET64 not defined, if file.h is included here????
 #ifndef __USE_FILE_OFFSET64
 #define __USE_FILE_OFFSET64 1
@@ -163,7 +166,6 @@ class CLCD
 
 
 	private:
-
 #ifdef HAVE_TRIPLEDRAGON
 		class FontsDef
 		{
@@ -222,7 +224,6 @@ class CLCD
 		pthread_t	thrTime;
 		bool		thread_running;
 #endif
-
 	public:
 		bool has_lcd;
 		void wake_up();
@@ -236,8 +237,6 @@ class CLCD
 		          const char * fontfile3=NULL, const char * fontname3=NULL); 
 
 		void setMode(const MODES m, const char * const title = "");
-		void setAudioMode(AUDIO_FORMAT streamtype);
-		void setAudioMode(void);
 		MODES getMode() { return mode; };
 		void setHddUsage(int perc);
 
@@ -258,8 +257,6 @@ class CLCD
 		void showAudioProgress(const char perc, bool isMuted = false);
 		void setBrightness(int);
 		int getBrightness();
-		void setLiveFE(char fe);
-		void setCA(bool onoff);
 
 		void setBrightnessStandby(int);
 		int getBrightnessStandby();
@@ -288,7 +285,7 @@ class CLCD
 		void Lock();
 		void Unlock();
 		void Clear();
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		void SetIcons(int icon, bool show);
 		void UpdateIcons();
 		void ShowDiskLevel();

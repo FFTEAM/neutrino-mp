@@ -24,18 +24,26 @@
 #include <config.h>
 #endif
 
-#include <driver/lcdd.h>
 #include <driver/framebuffer.h>
 
-#include <global.h>
-#include <neutrino.h>
 #include <fcntl.h>
+#include <sys/timeb.h>
 #include <time.h>
 #include <unistd.h>
-//#include <math.h>
+#include <errno.h>
 #include <sys/stat.h>
+#include <driver/lcdd.h>
+#include <global.h>
+#include <neutrino.h>
+#include <daemonc/remotecontrol.h>
+#include <system/settings.h>
+#include <system/set_threadname.h>
+
 #if HAVE_SPARK_HARDWARE
 #include <aotom_main.h>
+#include <audio_td.h>
+#include <zapit/zapit.h>
+#include <system/helpers.h>
 #define DISPLAY_DEV "/dev/vfd"
 #endif
 #if HAVE_AZBOX_HARDWARE
@@ -45,13 +53,12 @@
 #if HAVE_GENERIC_HARDWARE
 #define DISPLAY_DEV "/dev/null"
 #endif
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
-#include <zapit/zapit.h>
-#include <system/helpers.h>
+#if HAVE_SPARK_HARDWARE
 static bool usb_icon = false;
 static bool timer_icon = false;
 #endif
 
+extern CRemoteControl * g_RemoteControl; /* neutrino.cpp */
 static char volume = 0;
 //static char percent = 0;
 static bool power = true;
@@ -127,7 +134,7 @@ printf("%s '%s'\n", __func__, s);
 CLCD::CLCD()
 {
 	/* do not show menu in neutrino...,at spark7162 true, because there is th GLCD Menu */
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 	has_lcd = true;
 #else
 	has_lcd = false;
@@ -323,7 +330,7 @@ void CLCD::showTime(bool force)
 	blink = !blink;
 	if (led_g)
 		green = blink;
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 	if (led_r)
 		SetIcons(SPARK_REC1, red);
 	if (led_g)
@@ -355,12 +362,12 @@ void CLCD::showVolume(const char vol, const bool update)
 
 	if (muted)
 	{
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		SetIcons(SPARK_MUTE, 1);
 #endif
 		strcpy(s, mutestr[type]);
 	} else {
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		SetIcons(SPARK_MUTE, 0);
 #endif
 		sprintf(s, vol_fmt[type], volume);
@@ -401,11 +408,14 @@ void CLCD::showAudioProgress(const char, bool)
 
 void CLCD::setMode(const MODES m, const char * const)
 {
+
+	if(mode == MODE_AUDIO)
+		ShowIcon(FP_ICON_MP3, false);
 	mode = m;
 
 	switch (m) {
 	case MODE_TVRADIO:
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		SetIcons(SPARK_CYCLE, 0);
 #else
 		setled(0, 0);
@@ -418,13 +428,20 @@ void CLCD::setMode(const MODES m, const char * const)
 			upd_display = true;
 		}
 		showTime();
+	case MODE_AUDIO:
+		break;
+	case MODE_SCART:
+		resume();
+		break;
+	case MODE_MENU_UTF8:
+		pause();
 		break;
 	case MODE_SHUTDOWN:
 		showclock = false;
 		Clear();
 		break;
 	case MODE_STANDBY:
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		SetIcons(SPARK_CYCLE, 1);
 #else
 		setled(0, 1);
@@ -487,6 +504,7 @@ void CLCD::resume()
 
 void CLCD::pause()
 {
+	showclock = false;
 }
 
 void CLCD::Lock()
@@ -507,7 +525,7 @@ void CLCD::Clear()
 	if(ret < 0)
 		perror("[neutrino] spark_led Clear() VFDDISPLAYCLR");
 	close(fd);
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 	SetIcons(SPARK_ALL, false);
 	SetIcons(SPARK_CLOCK, timer_icon);
 #endif
@@ -521,7 +539,7 @@ void CLCD::Clear()
 }
 #endif
 
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 void CLCD::SetIcons(int icon, bool on)
 {
 	struct aotom_ioctl_data d;
@@ -595,7 +613,7 @@ void CLCD::ShowIcon(fp_icon i, bool on)
 	{
 		case FP_ICON_CAM1:
 			led_r = on;
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 			SetIcons(SPARK_REC1, on);
 #else
 			setled(led_r, -1); /* switch instant on / switch off if disabling */
@@ -603,13 +621,13 @@ void CLCD::ShowIcon(fp_icon i, bool on)
 			break;
 		case FP_ICON_PLAY:
 			led_g = on;
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 			SetIcons(SPARK_PLAY, on);
 #else
 			setled(-1, led_g);
 #endif
 			break;
-#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE
 		case FP_ICON_USB:
 			usb_icon = on;
 			SetIcons(SPARK_USB, on);
@@ -654,44 +672,5 @@ void CLCD::ShowIcon(fp_icon i, bool on)
 
 void CLCD::setEPGTitle(const std::string)
 {
-}
-
-void CLCD::setAudioMode(void)
-{
-#if HAVE_SPARK_HARDWARE
-	extern cAudio *audioDecoder;
-	setAudioMode(audioDecoder->GetStreamType());
-#endif
-}
-
-void CLCD::setAudioMode(AUDIO_FORMAT streamtype __attribute__((unused)))
-{
-#if HAVE_SPARK_HARDWARE
-	int dd = 0;
-	int mp3 = 0;
-	int ac3 = 0;
-	switch (streamtype) {
-		case AUDIO_FMT_MPEG:
-		case AUDIO_FMT_MP3:
-			mp3 = 1;
-			break;
-		case AUDIO_FMT_DOLBY_DIGITAL:
-		case AUDIO_FMT_DD_PLUS:
-			ac3 = 1;
-			break;
-		case AUDIO_FMT_DTS:
-			dd = 1;
-			break;
-		case AUDIO_FMT_AUTO:
-		case AUDIO_FMT_AAC:
-		case AUDIO_FMT_AAC_PLUS:
-		case AUDIO_FMT_AVS:
-		case AUDIO_FMT_MLP:
-		case AUDIO_FMT_WMA:
-		case AUDIO_FMT_MPG1:
-		default:
-			;
-	}
-#endif
 }
 
