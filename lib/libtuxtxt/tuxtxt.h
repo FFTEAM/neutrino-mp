@@ -203,6 +203,7 @@ int tv_pip_y;
 #define RC_HELP     CRCInput::RC_help
 #define RC_INFO     CRCInput::RC_info
 #define RC_DBOX     CRCInput::RC_setup
+#define RC_TEXT     CRCInput::RC_text
 #define RC_HOME     CRCInput::RC_home
 #define RC_TTTV     CRCInput::RC_tttv
 #define RC_TTZOOM   CRCInput::RC_ttzoom

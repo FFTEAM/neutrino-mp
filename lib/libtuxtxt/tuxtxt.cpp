@@ -6372,8 +6372,6 @@ void DecodePage()
 		int o = 0;
 		char bitmask ;
 
-
-
 		for (r = 0; r < 25; r++)
 		{
 			for (c = 0; c < 40; c++)

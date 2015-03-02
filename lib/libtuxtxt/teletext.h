@@ -1,5 +1,6 @@
 #ifndef __teletext_h__
 #define __teletext_h__
+#include <config.h>
 
 int tuxtxt_init();
 void tuxtxt_close();
