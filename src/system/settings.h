@@ -115,6 +115,7 @@ struct SNeutrinoTheme
 
 struct SNeutrinoSettings
 {
+	int conf_version;
 	//video
 	int video_Format;
 	int video_Mode;
@@ -263,6 +264,16 @@ struct SNeutrinoSettings
 	int epg_search_history_max;
 	std::list<std::string> epg_search_history;
 
+	int epg_enable_freesat;
+	int epg_enable_viasat;
+#if ENABLE_SHAIRPLAY
+	int shairplay_enabled;
+	int shairplay_port;
+	int shairplay_bufsize;
+	std::string shairplay_apname;
+	std::string shairplay_password;
+#endif
+
 	//network
 	std::string network_ntpserver;
 	std::string network_ntprefresh;
@@ -270,7 +281,8 @@ struct SNeutrinoSettings
 	std::string ifname;
 
 	std::list<std::string> webtv_xml;
-
+	std::string streaming_server_url;
+	std::string streaming_server_name;
 #ifdef ENABLE_GRAPHLCD
 	int glcd_enable;
 	uint32_t glcd_color_fg;
@@ -310,12 +322,13 @@ struct SNeutrinoSettings
 		P_MAIN_TIMER,
 		P_MAIN_MEDIA,
 
-		P_MAIN_GAMES,
-		P_MAIN_TOOLS,
-		P_MAIN_SCRIPTS,
-		P_MAIN_LUA,
 		P_MAIN_SETTINGS,
 		P_MAIN_SERVICE,
+		P_MAIN_BLUEPANEL,
+		P_MAIN_LUA,
+		P_MAIN_TOOLS,
+		P_MAIN_SCRIPTS,
+		P_MAIN_GAMES,
 		P_MAIN_SLEEPTIMER,
 		P_MAIN_STANDBY,
 		P_MAIN_REBOOT,
@@ -345,11 +358,14 @@ struct SNeutrinoSettings
 		P_MSER_RELOAD_CHANNELS,
 		P_MSER_BOUQUET_EDIT,
 		P_MSER_RESET_CHANNELS,
-		P_MSER_RESTART,
-		P_MSER_RELOAD_PLUGINS,
 		P_MSER_RESTART_TUNER,
-		P_MSER_SERVICE_INFOMENU,
+		P_MSER_RESTART_CAM,
+		P_MSER_RELOAD_PLUGINS,
+		P_MSER_SCRIPTS,
 		P_MSER_SOFTUPDATE,
+		P_MSER_RESTART,
+		P_MSER_SERVICE_INFOMENU,
+		P_MSER_BOOT_SPARK,
 
 		//media menu
 		P_MEDIA_MENU,
@@ -364,6 +380,7 @@ struct SNeutrinoSettings
 		P_MPLAYER_FILEPLAY,
 		P_MPLAYER_INETPLAY,
 		P_MPLAYER_YTPLAY,
+		P_MPLAYER_NKPLAY,
 
 		//feature keys
 		P_FEAT_KEY_FAVORIT,
@@ -375,10 +392,10 @@ struct SNeutrinoSettings
 		P_UMENU_SHOW_CANCEL,
 
 		//plugins types
-		P_UMENU_PLUGIN_TYPE_GAMES,
+		P_UMENU_PLUGIN_TYPE_LUA,
 		P_UMENU_PLUGIN_TYPE_TOOLS,
 		P_UMENU_PLUGIN_TYPE_SCRIPTS,
-		P_UMENU_PLUGIN_TYPE_LUA,
+		P_UMENU_PLUGIN_TYPE_GAMES,
 
 		P_SETTINGS_MAX
 	};
@@ -465,6 +482,7 @@ struct SNeutrinoSettings
 	std::string plugin_hdd_dir;
 
 	std::string logo_hdd_dir;
+	int logo_rename_to_channelname;
 
 	std::string plugins_disabled;
 	std::string plugins_game;
@@ -521,6 +539,7 @@ struct SNeutrinoSettings
 	int mpkey_bookmark;
 	int mpkey_plugin;
 	int mpkey_next3dmode;
+	int mpkey_vtxt;
 	int mpkey_goto;
 	int mpkey_subtitle;
 	int mpkey_next_repeat_mode;
@@ -740,9 +759,14 @@ struct SNeutrinoSettings
 	int filebrowser_sortmethod;
 	int filebrowser_denydirectoryleave;
 	int filebrowser_use_filter;
+	int filebrowser_multi_select;
+	int filebrowser_multi_select_confirm_dir;
 
 	//movieplayer
 	int   movieplayer_repeat_on;
+
+	//two erweiterungen
+	int infoviewer_ecm_info;
 
 	//zapit setup
 	std::string StartChannelTV;
@@ -763,6 +787,8 @@ struct SNeutrinoSettings
 	std::string	ttx_font_file;
 	std::string	sub_font_file;
 	std::string	update_dir;
+	int	adzap_zapBackPeriod;
+	int	menu_numbers_as_icons;
 	// USERMENU
 	typedef enum
 	{
@@ -796,20 +822,25 @@ struct SNeutrinoSettings
 		ITEM_CLOCK = 19,
 		ITEM_GAMES = 20,
 		ITEM_SCRIPTS = 21,
-		ITEM_YOUTUBE = 22,
-		ITEM_FILEPLAY = 23,
-		ITEM_TOOLS = 24,
-		ITEM_LUA = 25,
-
-		ITEM_HDDMENU = 26,
-		ITEM_AUDIOPLAY = 27,
-		ITEM_INETPLAY = 28,
-		ITEM_NETSETTINGS = 29,
-		ITEM_SWUPDATE = 30,
-		ITEM_TUNER_RESTART = 31,
-		ITEM_THREE_D_MODE = 32,
-		ITEM_RASS = 33,
-
+                ITEM_ADZAP = 22,
+                ITEM_EMU_RESTART = 23,
+                ITEM_TUNER_RESTART = 24,
+                ITEM_THREE_D_MODE = 25,
+                ITEM_WEBTV = 26,
+                ITEM_RASS = 27,
+                ITEM_YOUTUBE = 28,
+		ITEM_NETZKINO = 29,
+		ITEM_FILEPLAY = 30,
+		ITEM_HDDMENU = 31,
+		ITEM_AUDIOPLAY = 32,
+		ITEM_INETPLAY = 33,
+		ITEM_TOOLS = 34,
+		ITEM_LUA = 35,
+		ITEM_NETSETTINGS = 36,
+		ITEM_SWUPDATE = 37,
+#if 0
+		ITEM_MOVIEPLAYER_TS,
+#endif
 		ITEM_MAX   // MUST be always the last in the list
 	} USER_ITEM;
 	typedef struct {
