@@ -26,8 +26,6 @@
 #define __hdd_menu__
 
 #include "widget/menue.h"
-#include <string>
-#include <vector>
 #include <gui/widget/hintbox.h>
 
 using namespace std;
@@ -68,7 +66,6 @@ class CHDDMenuHandler : public CMenuTarget
 			bool mounted;
 		};
 		std::vector<hdd_s> hdd_list;
-	public:
 		struct cmp_hdd_by_name: public binary_function <const struct hdd_s, const struct hdd_s, bool>
 		{
 			bool operator() (const struct hdd_s c1, const struct hdd_s c2)
@@ -98,6 +95,7 @@ class CHDDMenuHandler : public CMenuTarget
 		bool scanDevices();
 		void showHint(std::string &messsage);
 		void setRecordPath(std::string &dev);
+	public:
 		CHDDMenuHandler();
 		~CHDDMenuHandler();
 

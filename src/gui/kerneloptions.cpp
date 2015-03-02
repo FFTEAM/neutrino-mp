@@ -69,7 +69,7 @@ void CKernelOptions::loadModule(int i)
 
 void CKernelOptions::unloadModule(int i)
 {
-	my_system(2, "modprobe", "-r", modules[i].moduleList.back().first.c_str());
+	my_system(3, "modprobe", "-r", modules[i].moduleList.back().first.c_str());
 }
 
 void CKernelOptions::updateStatus(void)

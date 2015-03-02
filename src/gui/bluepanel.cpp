@@ -56,12 +56,10 @@ CBluePanel::~CBluePanel()
 	//leer
 }
 
-int CBluePanel::exec(CMenuTarget* parent, const std::string &actionKey)
+int CBluePanel::exec(CMenuTarget* parent, const std::string & actionKey)
 {
 	dprintf(DEBUG_DEBUG, "Init: BluePanel v1.0 by rgmviper+thomas\n");
-
 	int  res = menu_return::RETURN_EXIT_REPAINT;
-		
 	if (parent)
 		parent->hide();
 
@@ -162,4 +160,5 @@ int CBluePanel::showBluePanel()
 	
 	// Exit
 	return w_mf.exec(NULL, "");;
+
 }

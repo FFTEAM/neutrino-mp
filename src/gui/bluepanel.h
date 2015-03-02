@@ -51,7 +51,6 @@ class CBluePanel : public CMenuTarget, CChangeObserver
 		int softcam_count;
 		bool openvpn_is;
 		bool inadyn_is;
-
 	public:
 		CBluePanel();
 		~CBluePanel();
@@ -60,10 +59,4 @@ class CBluePanel : public CMenuTarget, CChangeObserver
 		void SaveConfig();
 		int exec(CMenuTarget* parent, const std::string & actionKey);
 };
-
 #endif
-
-
-
-
-
