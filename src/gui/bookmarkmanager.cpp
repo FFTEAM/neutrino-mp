@@ -37,6 +37,7 @@
 #include <system/settings.h>
 #include <driver/screen_max.h>
 #include <driver/display.h>
+
 #include <gui/components/cc.h>
 #include <gui/widget/messagebox.h>
 #include <gui/widget/hintbox.h>
@@ -323,7 +324,7 @@ const CBookmark * CBookmarkManager::getBookmark(CMenuTarget* parent)
 			res=-1;
 			loop=false;
 		}
-		else if (msg==CRCInput::RC_help)
+		else if ( msg == CRCInput::RC_help )
 		{
 			// TODO Add Help
 		}
@@ -335,7 +336,6 @@ const CBookmark * CBookmarkManager::getBookmark(CMenuTarget* parent)
 				res = menu_return::RETURN_EXIT_ALL;
 			}
 		}
-		frameBuffer->blit();
 	}
 	hide();
 
