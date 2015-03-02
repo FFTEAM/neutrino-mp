@@ -168,16 +168,14 @@ typedef enum dvb_fec {
 
 #define TIME_STEP 200
 #define TIMEOUT_MAX_MS (feTimeout*100)
-
 /*********************************************************************************************************/
-
 CFrontend::CFrontend(int Number, int Adapter)
 {
 	DBG("[fe%d] New frontend on adapter %d\n", Number, Adapter);
 	fd		= -1;
 	fenumber	= Number;
 	adapter		= Adapter;
-	slave		= false; //(Number != 0); //false;
+	slave		= false; /* is set in frontend->setMasterSlave() */
 	standby		= true;
 	locked		= false;
 	usecount	= 0;
