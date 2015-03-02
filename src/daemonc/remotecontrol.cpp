@@ -4,6 +4,8 @@
 	Copyright (C) 2001 Steffen Hehn 'McClean'
 	Homepage: http://dbox.cyberphoria.org/
 
+	(C) 2008-2013 Stefan Seyfried
+
 	Kommentar:
 
 	Diese GUI wurde von Grund auf neu programmiert und sollte nun vom
@@ -109,6 +111,8 @@ CRemoteControl::CRemoteControl()
 	is_video_started = true;
 	//current_programm_timer = 0;
 	//next_EPGid = 	0;
+	are_subchannels = false;
+	has_unresolved_ctags = false;
 }
 
 
@@ -279,7 +283,7 @@ int CRemoteControl::handleMsg(const neutrino_msg_t msg, neutrino_msg_data_t data
 		if ( !is_video_started )
 			g_RCInput->postMsg( NeutrinoMessages::EVT_PROGRAMLOCKSTATUS, 0x100, false );
 
-		return messages_return::handled;
+	    return messages_return::handled;
 	}
 	else if (msg == NeutrinoMessages::EVT_NOEPG_YET)
 	{
@@ -506,7 +510,10 @@ void CRemoteControl::processAPIDnames()
 		if((pref_idx >= 0) && (pref_idx < pref_ac3_idx))
 			pref_ac3_found = -1;
 	}
-
+#ifdef APID_DEBUG
+	if (! current_PIDs.APIDs.empty())
+		printf("Neutrino: ");
+#endif
 	for(unsigned int count=0; count< current_PIDs.APIDs.size(); count++)
 	{
 		const char *iso = getISO639Description(current_PIDs.APIDs[count].desc);
@@ -537,7 +544,10 @@ void CRemoteControl::processAPIDnames()
 		else if (current_PIDs.APIDs[count].is_eac3 &&  !strstr(current_PIDs.APIDs[count].desc, " (EAC3)"))
 			strncat(current_PIDs.APIDs[count].desc, " (EAC3)", DESC_MAX_LEN - strlen(current_PIDs.APIDs[count].desc)-1);
 	}
-
+#ifdef APID_DEBUG
+	if (! current_PIDs.APIDs.empty())
+		printf("\n");
+#endif
 	if ( has_unresolved_ctags )
 	{
 		if ( current_EPGid != 0 )
@@ -561,7 +571,7 @@ void CRemoteControl::processAPIDnames()
 									strncat(current_PIDs.APIDs[j].desc, " (AC3)", DESC_MAX_LEN - strlen(current_PIDs.APIDs[j].desc)-1);
 								else if (current_PIDs.APIDs[j].is_aac &&  !strstr(current_PIDs.APIDs[j].desc, " (AAC)"))
 									strncat(current_PIDs.APIDs[j].desc, " (AAC)", DESC_MAX_LEN - strlen(current_PIDs.APIDs[j].desc)-1);
-								else if (current_PIDs.APIDs[j].is_eac3 && !strstr(current_PIDs.APIDs[j].desc, " (EAC3)"))
+								else if (current_PIDs.APIDs[j].is_eac3 &&  !strstr(current_PIDs.APIDs[j].desc, " (EAC3)"))
 									strncat(current_PIDs.APIDs[j].desc, " (EAC3)", DESC_MAX_LEN - strlen(current_PIDs.APIDs[j].desc)-1);
 							}
 							current_PIDs.APIDs[j].component_tag = -1;
