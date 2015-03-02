@@ -893,7 +893,7 @@ int CEpgData::show(const t_channel_id channel_id, uint64_t a_id, time_t* a_start
 						g_Timerd->addAdZaptoTimerEvent(channel_id,
 								     time (NULL) + (g_settings.wzap_time * 60));
 						loop = false;
-					} else {
+					}else{
 						g_Timerd->addZaptoTimerEvent(channel_id,
 								     epgData.epg_times.startzeit - (g_settings.zapto_pre_time * 60),
 								     epgData.epg_times.startzeit - ANNOUNCETIME - (g_settings.zapto_pre_time * 60), 0,
