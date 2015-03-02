@@ -196,6 +196,39 @@ audioplayer.spectrum LCD Skala
 audioplayer.stop Stopp
 audioplayer.title_artist Titel, Interpret
 audioplayerpicsettings.general Audioplayer/Bildbetrachter/Movieplayer
+batchepg.epg.mhw1 MHW1
+batchepg.epg.mhw2 MHW2
+batchepg.epg.off Aus
+batchepg.epg.standard Standard
+batchepg.hint EPG-Informationen werden aktualisiert. Bitte warten. Kanal:
+batchepg.refresh Aktualisierung starten
+batchepg.refreshall Alle aktualisieren
+batchepg.run_at_shutdown Aktualisierung vor Ausschalten
+batchepg.save Einstellungen speichern
+batchepg.settings Einstellungen
+batchepg.standard_wait_time Wartezeit für normalen EPG
+bluepanel.emu Cam Menue
+bluepanel.emu.none Nicht aktiv
+bluepanel.emu.mgcamd MGCamd
+bluepanel.emu.incubus IncubusCamd
+bluepanel.emu.camd3 Camd3
+bluepanel.emu.mbox Mbox
+bluepanel.emu.oscam Oscam
+bluepanel.emu.osemu Osemu
+bluepanel.emu.wicard Wicard
+bluepanel.emu.select Cam Auswahl
+bluepanel.emu.restart Cam neu starten
+bluepanel.emu.disable Cam deaktivieren
+bluepanel.swap Swap Menue
+bluepanel.swap.swapram SWAPRAM
+bluepanel.swap.swappart SWAPPART
+bluepanel.swap.swapfile SWAPFILE
+bluepanel.swap.select Swap Auswahl
+bluepanel.swap.onoff SWAP
+bluepanel.fritzcall Fritzcall Menue
+bluepanel.fritzcall.select Fritzcallmonitor
+bluepanel.fritzcall.on Ein
+bluepanel.fritzcall.off Aus
 bookmarkmanager.delete Löschen
 bookmarkmanager.name Bookmarks
 bookmarkmanager.rename Umbenennen
@@ -288,6 +321,7 @@ ci.settings CI-Module
 ci.timeout CAM antwortet nicht
 ci.waiting Warte auf CAM-Antwort
 clock_background Hintergrund anzeigen
+clock_format Format
 clock_seconds Sekunden anzeigen
 clock_size_height Höhe der Anzeige
 clock_switch_off Uhr ausblenden
@@ -368,6 +402,7 @@ epgviewer.genre Genre
 epgviewer.length Spieldauer (Min.)
 epgviewer.nodetailed Keine ausführlichen Informationen verfügbar
 epgviewer.notfound Keine Programminformationen (EPG) gefunden
+epgviewer.select_screening Terminauswahl
 eventfinder.head EPG-Suche
 eventfinder.history Frühere Suchen
 eventfinder.keyword Suche nach Textpassage
@@ -401,7 +436,7 @@ extra.dboxinfo_ram RAM
 extra.dboxinfo_size Gesamt
 extra.dboxinfo_swap Swap
 extra.dboxinfo_time Zeit
-extra.dboxinfo_timeformat %F, %H:%M:%S
+extra.dboxinfo_timeformat %FT%H:%M:%S%z
 extra.dboxinfo_uptime Uptime
 extra.dboxinfo_use Nutzung
 extra.dboxinfo_used Benutzt
@@ -417,6 +452,7 @@ extra.fec_7_8 7/8
 extra.fec_8_9 8/9
 extra.fec_9_10 9/10
 extra.fec_auto Auto
+extra.imagesettings.title Image-Einstellungen
 extra.key_current_transponder Aktuelle Transponder Taste
 extra.key_format_mode Videoformat
 extra.key_help Hilfe-Taste
@@ -430,8 +466,10 @@ extra.key_pip_setup PiP Konfiguration
 extra.key_pip_swap Umschalten PiP/live
 extra.key_plugin Schnellstart-Plugin
 extra.key_record Aufnahme-Taste
-extra.key_screenshot Screenshot-Taste
+extra.key_screenshot Screenshot Taste
+extra.key_showclock Zeitanzeige
 extra.key_switchformat Nächste Auflösung
+extra.key_timerlist Timer-Liste
 extra.key_timeshift Timeshift
 extra.key_unlock Entsperrtaste
 extra.ladirection Breitengrad-Ausrichtung
@@ -514,6 +552,9 @@ extra.tp_mod_4_nr QAM/4-NR
 extra.tp_mod_64 QAM/64
 extra.tp_mod_8 8PSK
 extra.tp_mod_auto QAM/AUTO
+extra.tp_pilot Pilot
+extra.tp_pilot_auto Auto (HW)
+extra.tp_pilot_auto_sw Auto (SW)
 extra.tp_pol Polarisation
 extra.tp_pol_h H
 extra.tp_pol_l L
@@ -947,7 +988,7 @@ mainmenu.scripts Skripte >
 mainmenu.service Service
 mainmenu.settings Einstellungen
 mainmenu.shutdown Ausschalten
-mainmenu.shutdown_menu Ausschalt-Optionen
+mainmenu.shutdown_menu Ausschalt Optionen
 mainmenu.sleeptimer SleepTimer
 mainmenu.standby Standby
 mainmenu.tools Tools-Plugins >
@@ -1052,6 +1093,7 @@ menu.hint_epg_old_events Veraltete EPG-Daten werden nach dieser Zeit (in Stunden
 menu.hint_epg_read Liest nach einem Neustart die EPG-Daten von einem externen Datenträger wieder ein
 menu.hint_epg_save Speichert die EPG-Daten beim Herunterfahren auf einem externen Datenträger und läd es von dort nach einen Neustart
 menu.hint_epg_save_frequently Speichert die EPG-Daten in regelmäßigen Abständen auf einem externen Datenträger
+menu.hint_epg_save_mode Speichert die EPG-Daten nur für Sender, die in die Favoriten aufgenommen sind
 menu.hint_epg_save_standby Speichert die EPG-Daten auch, wenn in den Standby-Modus geschalten wird
 menu.hint_epg_scan Zu scannende Bouquets wählen. Aktuelles Bouquet beim Umschalten, markierte Bouquets oder alle Favoriten
 menu.hint_epg_scan_mode Aktivieren Sie den Hintergrundscan der EPG-Daten, wenn ein freier Tuner vorhanden ist
@@ -1351,7 +1393,7 @@ menu.hint_scan_felink Select tuner to link tuner to
 menu.hint_scan_femode Wählen Sie den Verbindungstyp für den zweiten Tuner
 menu.hint_scan_feretries Wiederholungen bei fehlgeschlagenem Tuning
 menu.hint_scan_fesetup Konfigurieren des oder der Tuner
-menu.hint_scan_fetimeout Wartezeit auf das Signal
+menu.hint_scan_fetimeout Maximale Wartezeit auf das Signal in 1/10 Sekunden
 menu.hint_scan_freq Geben Sie eine Transponder-Frequenz ein
 menu.hint_scan_fta Lassen Sie nur frei empfangbare (nicht-verschlüsselte) Programme suchen
 menu.hint_scan_gi Wählen Sie den Schutzintervall für diesen terrestrischen Kanal
@@ -1375,6 +1417,7 @@ menu.hint_scan_motorpos Wählen Sie eine gespeicherten Positions-Nummer für die
 menu.hint_scan_nid Geben Sie ihre Kabelnetzwerk-ID in dezimal ein
 menu.hint_scan_nit Lassen Sie Transponder über gesendete NIT-Daten (Network Information Table) hinzufügen
 menu.hint_scan_pids Duchsucht und speichert auch die Audio-, Video- und PMT-PIDs
+menu.hint_scan_pilot Wählen Sie den Pilot-Parameter
 menu.hint_scan_pol Wählen Sie eine Transponder-Polarisation
 menu.hint_scan_rate Geben Sie eine Transponder-Symbolrate ein
 menu.hint_scan_reset_numbers Zurücksetzen der existierender Kanal-Nummern und Umnummerierung nach einen Suchlauf
@@ -1475,6 +1518,7 @@ menu.hint_video_mask Definieren Sie einen kanalspezifischen Rahmen zum Ausblende
 menu.hint_video_mixer_color Wenn kein Signal vorhanden ist, wird die gewählte Farbe als Hintergrundfarbe verwendet.
 menu.hint_video_mode Wählen Sie den Modus des Ausgangssignals für den HDMI-Anschluss
 menu.hint_video_modes Definiert, welche Videosysteme mit der VF-Taste der Fernbedienung ausgewählt werden können
+menu.hint_video_modes_auto Definiert, welche Videosysteme automatisch ausgewählt werden können
 menu.hint_video_pip Bild in Bild Größe und Position
 menu.hint_video_psi On-Screen-Menü zur Änderung von Farbe, Kontrast und mehr
 menu.hint_video_psi_step Setzt die Schrittweite für das On-Screen-Menü
@@ -1511,6 +1555,8 @@ miscsettings.colored_events_1 aktuelle
 miscsettings.colored_events_2 nächste
 miscsettings.cpu CPU
 miscsettings.energy Energieverbrauch
+miscsettings.epg.batch.head EPG-Aktualisierung
+miscsettings.epg.batch.settings EPG-Aktualisierung
 miscsettings.epg_cache EPG-Cache (Tage)
 miscsettings.epg_cache_hint1 EPG-Daten im Voraus zwischenspeichern?
 miscsettings.epg_cache_hint2 (Angabe in Tagen)
@@ -1528,13 +1574,15 @@ miscsettings.epg_old_events_hint2 Angabe in Stunden
 miscsettings.epg_read Gespeicherte EPG-Daten einlesen
 miscsettings.epg_save EPG zwischenspeichern
 miscsettings.epg_save_frequently EPG regelmäßig speichern
+miscsettings.epg_save_mode Nur Favoriten
 miscsettings.epg_save_standby EPG speichern in Standby-Modus
+miscsettings.epg_saving EPG-Daten werden gespeichert ...
 miscsettings.epg_scan Hintergrundscan EPG
 miscsettings.epg_scan_always Immer
 miscsettings.epg_scan_bouquets Zu scannende Bouquets
 miscsettings.epg_scan_bq Aktuelles Bouquet
 miscsettings.epg_scan_fav Alle Favoriten
-miscsettings.epg_scan_live Bei eingeschaltener Box
+miscsettings.epg_scan_live Bei eingeschalteter Box
 miscsettings.epg_scan_sel Markierte Bouquets
 miscsettings.epg_scan_standby Im Standby Modus
 miscsettings.general Allgemein
@@ -1614,7 +1662,7 @@ motorcontrol.motor_pos (a) Motorposition:
 motorcontrol.movement (b) Bewegung:
 motorcontrol.msec Millisekunden
 motorcontrol.network Netzwerk Info
-motorcontrol.no_mode egal
+motorcontrol.no_mode keine Sorge (wasn das?)
 motorcontrol.notdef nicht benutzt
 motorcontrol.override übersteuern
 motorcontrol.pos_decrease Motorposition runter (a)
@@ -1697,7 +1745,7 @@ moviebrowser.info_channel Kanal
 moviebrowser.info_file Datei
 moviebrowser.info_filename Dateiname
 moviebrowser.info_genre_major Genre
-moviebrowser.info_genre_minor Genre
+moviebrowser.info_genre_minor Genre (untergeordnet)
 moviebrowser.info_head Film Informationen
 moviebrowser.info_head_update Inhalte in allen sichtbaren Filminfos speichern
 moviebrowser.info_info1 Info 1
@@ -1813,11 +1861,11 @@ movieplayer.bookmarkname_hint1 Geben Sie den Namen für das neue Lesezeichen ein
 movieplayer.bookmarkname_hint2 
 movieplayer.chapters Kapitel
 movieplayer.defplugin Start-Plugin
-movieplayer.fileplayback Datei-Browser
+movieplayer.fileplayback Datei-Browser Abspielen (Multiformat)
 movieplayer.head Movieplayer
 movieplayer.nkplayback Netzkino
-movieplayer.starting Wiedergabe starten ...
-movieplayer.stopping Wiedergabe wird beendet ...
+movieplayer.starting Wiedergabe starten...
+movieplayer.stopping Wiedergabe wird beendet...
 movieplayer.titles Titel
 movieplayer.toomanybookmarks Sie haben bereits zu viele Lesezeichen angelegt.\nEs muß erst ein anderes gelöscht werden.
 movieplayer.tshelp1 Stopp
@@ -1832,8 +1880,8 @@ movieplayer.tshelp6 ca. 1 Minute zurück
 movieplayer.tshelp7 ca. 1 Minute vor
 movieplayer.tshelp8 ca. 5 Minuten zurück
 movieplayer.tshelp9 ca. 5 Minuten vor
-movieplayer.tsplayback Abspielen
-movieplayer.ytplayback Youtube
+movieplayer.tsplayback TS Abspielen
+movieplayer.ytplayback Youtube-Feed Wiedergabe
 mpkey.audio Audiotrack
 mpkey.bookmark Speichere Lesezeichen
 mpkey.forward Vorlauf
@@ -2220,8 +2268,9 @@ screensaver.dir Verzeichnis
 screensaver.menu Bildschirmschoner
 screensaver.off Bildschirmschoner aus
 screensaver.timeout Bilderwechsel
-screensetup.lowerright grün = Bildrand unten, rechts
-screensetup.upperleft rot = Bildrand oben, links
+screensetup.lowerright Grün = Bildrand unten rechts
+screensetup.remove Maske entfernen
+screensetup.upperleft Rot = Bildrand oben links
 screenshot.backbuffer Sekundärer Buffer (Back Buffer)
 screenshot.count Anzahl
 screenshot.cover Erzeuge Filmcover für Moviebrowser
@@ -2239,7 +2288,7 @@ screenshot.please_wait_cover Erzeuge Video-Cover, bitte warten ...
 screenshot.png_compression PNG-Komprimierungsstärke
 screenshot.res Auflösung
 screenshot.scale Skalierung
-screenshot.tv Video/TV-Auflösung
+screenshot.tv TV-Auflösung
 screenshot.video Video im Hintergrund
 screenshot.web yWeb
 servicemenu.boot_params_ask Soll wirklich SPARK gebootet werden?
@@ -2334,6 +2383,8 @@ three.d.tile Tile
 three.d.topbottom Top-and-Bottom
 timer.eventrecord.msg Die Sendung wurde zur Aufnahme vorgemerkt.
 timer.eventrecord.title Aufnahme vormerken
+timer.eventremoved.msg Die Aufnahme der Sendung wurde storniert.
+timer.eventremoved.title Aufnahme storniert
 timer.eventtimed.msg Die Sendung wurde vorgemerkt.
 timer.eventtimed.title Sendung vormerken
 timerbar.channelswitch Umschalten
@@ -2342,6 +2393,7 @@ timerlist.alarmtime Alarmzeit
 timerlist.apids Audio PIDs
 timerlist.apids_dflt Voreingestellte Tonspuren aufn.
 timerlist.ask_to_delete Das Löschen des Timers beendet auch die laufende Aufnahme!\n%sTrotzdem fortsetzen?
+timerlist.batchepg EPG-Aktualisierung
 timerlist.bouquetselect Bouquet wählen
 timerlist.channel Kanal
 timerlist.channelselect Kanal wählen
@@ -2386,6 +2438,7 @@ timerlist.standby.off Aufwachen aus Standby
 timerlist.standby.on In Standby gehen
 timerlist.stoptime Stoppzeit
 timerlist.type Timertyp
+timerlist.type.batchepg EPG aktualisieren
 timerlist.type.execplugin Plugin ausführen
 timerlist.type.nextprogram Nächstes Programm
 timerlist.type.record Aufnahme
@@ -2482,6 +2535,7 @@ videomenu.dbdr_both deBlock & deRing
 videomenu.dbdr_deblock deBlock
 videomenu.dbdr_none aus
 videomenu.enabled_modes Videosysteme auf der VF-Taste
+videomenu.enabled_modes_auto Videosysteme für autom. Wahl
 videomenu.fullscreen Vollbild
 videomenu.hdmi_cec HDMI-CEC
 videomenu.hdmi_cec_broadcast Senden an alle Geräte

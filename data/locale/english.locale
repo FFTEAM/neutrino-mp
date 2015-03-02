@@ -123,7 +123,7 @@ audiomenu.avs avs
 audiomenu.avsync A/V sync
 audiomenu.avsync_am Audio master
 audiomenu.clockrec 
-audiomenu.dolbydigital Dolby Digital (AC-3)
+audiomenu.dolbydigital Prefer Dolby Digital (AC-3)
 audiomenu.dolbydigital.auto Prefer Dolby Digital
 audiomenu.hdmi_dd Encoded DD on HDMI
 audiomenu.hdmi_dd_auto auto
@@ -196,6 +196,39 @@ audioplayer.spectrum lcd a-spectrum
 audioplayer.stop Stop
 audioplayer.title_artist Title, Artist
 audioplayerpicsettings.general Audioplayer/Picviewer/Movieplayer
+batchepg.epg.mhw1 MHW1
+batchepg.epg.mhw2 MHW2
+batchepg.epg.off Off
+batchepg.epg.standard Standard
+batchepg.hint Updating EPG data, please wait. Channel:
+batchepg.refresh Start update
+batchepg.refreshall Update all
+batchepg.run_at_shutdown Update at shutdown
+batchepg.save Save settings
+batchepg.settings Settings
+batchepg.standard_wait_time Wait time für standard EPG
+bluepanel.emu Cam Menue
+bluepanel.emu.none not aktiv
+bluepanel.emu.mgcamd MGCamd
+bluepanel.emu.incubus IncubusCamd
+bluepanel.emu.camd3 Camd3
+bluepanel.emu.mbox Mbox
+bluepanel.emu.oscam Oscam
+bluepanel.emu.osemu Osemu
+bluepanel.emu.wicard Wicard
+bluepanel.emu.select Cam Select
+bluepanel.emu.restart restart Cam
+bluepanel.emu.disable deactivate Cam
+bluepanel.swap Swap Menue
+bluepanel.swap.swapram SWAPRAM
+bluepanel.swap.swappart SWAPPART
+bluepanel.swap.swapfile SWAPFILE
+bluepanel.swap.select Swap Select
+bluepanel.swap.onoff SWAP
+bluepanel.fritzcall Fritzcall Menue
+bluepanel.fritzcall.select Fritzcallmonitor
+bluepanel.fritzcall.on On
+bluepanel.fritzcall.off Off
 bookmarkmanager.delete delete
 bookmarkmanager.name bookmarks
 bookmarkmanager.rename rename
@@ -238,7 +271,7 @@ channellist.current_tp Current transponder
 channellist.edit Edit
 channellist.epgtext_align_left left
 channellist.epgtext_align_right right
-channellist.extended Show event progress
+channellist.extended Show progressbars
 channellist.extended_colored with colored progressbar
 channellist.extended_simple with simple progressbar
 channellist.favs Favoriten
@@ -403,7 +436,7 @@ extra.dboxinfo_ram RAM
 extra.dboxinfo_size Total
 extra.dboxinfo_swap Swap
 extra.dboxinfo_time Time
-extra.dboxinfo_timeformat %F, %H:%M:%S
+extra.dboxinfo_timeformat %FT%H:%M:%S%z
 extra.dboxinfo_uptime Uptime
 extra.dboxinfo_use Use
 extra.dboxinfo_used Used
@@ -419,6 +452,7 @@ extra.fec_7_8 7/8
 extra.fec_8_9 8/9
 extra.fec_9_10 9/10
 extra.fec_auto Auto
+extra.imagesettings.title Image Settings
 extra.key_current_transponder Current Transponder Key
 extra.key_format_mode Video format
 extra.key_help Help key
@@ -449,14 +483,14 @@ extra.neutrinosettings.title Neutrino Settings
 extra.north North
 extra.record_bufsize Write buffer size
 extra.record_bufsize_dmx DMX buffer size
-extra.record_time Maximum recording time
+extra.record_time Maximal recording duration
 extra.record_time_ts Maximal timeshift duration
 extra.rotor_swap Swap rotor east/west
 extra.rounded_corners Shape of corners
 extra.rounded_corners_off angular
 extra.rounded_corners_on rounded
 extra.saveconfig Neutrino Settings: Save as
-extra.savekeys Save as
+extra.savekeys Save keys as
 extra.scrambled_message Scrambled Message
 extra.show_mute_icon mute-icon at volume 0
 extra.sms_channel sms-mode channel
@@ -580,8 +614,8 @@ filebrowser.scan Scaning folder
 filebrowser.select Select
 filebrowser.showrights Show file rights
 filebrowser.sort.date (date)
-filebrowser.sort.name (name)
-filebrowser.sort.namedirsfirst (name, dir first)
+filebrowser.sort.name (filename)
+filebrowser.sort.namedirsfirst (filename2)
 filebrowser.sort.size (Size)
 filebrowser.sort.type (type)
 filesystem.is.utf8 file system
@@ -759,7 +793,7 @@ hdd_check_failed HDD-check failed!
 hdd_check_format_bad Checking of disks with format %s is not supported.
 hdd_extended_settings Extended HDD-Settings
 hdd_fast Fast
-hdd_format Format device
+hdd_format Formating drive...
 hdd_format_failed Formating failed! Make sure device not in use, reboot and try again
 hdd_format_warn All data on device will be lost ! Continue with format ?
 hdd_fmt_label HDD label
@@ -768,12 +802,12 @@ hdd_fs Filesystem used to format
 hdd_fs_unknown unknown
 hdd_label_hint1 Put in disc label and press save
 hdd_label_hint2 Only if RECORD (default disc label for recording) the necassary folders were written to disc
-hdd_manage Manage device
+hdd_manage Manage Drives
 hdd_middle Mid
 hdd_mount Mount
 hdd_mount_failed Failed to mount.
 hdd_mount_ok Device ready to use.
-hdd_mount_umount Mount/Unmount
+hdd_mount_umount Mount/unmount drives
 hdd_noise Acoustic-control (AAM)
 hdd_not_found No HDD found
 hdd_removable_device Removable device
@@ -897,7 +931,7 @@ lcdmenu.displaymode.running Display in operation
 lcdmenu.displaymode.standby Display in standby
 lcdmenu.displaymode.timeoff No time
 lcdmenu.displaymode.timeonly Time only
-lcdmenu.head LED/VFD/LED Settings
+lcdmenu.head VFD/LED Settings
 lcdmenu.lcdcontroler Brightness
 lcdmenu.scroll Enable text scroll
 lcdmenu.statusline status line
@@ -931,7 +965,7 @@ ledcontroller.title LEDs
 lua.boolparam_deprecated1 Caution!
 lua.boolparam_deprecated2 The use of number or string
 lua.boolparam_deprecated3 for a Boolean parameter is deprecated.\n                      Please use native bool values eg.
-lua.function_deprecated1 Caution!
+lua.function_deprecated1 Attention!
 lua.function_deprecated2 Function
 lua.function_deprecated3 is deprecated,\n                      please use
 mainmenu.audioplayer Audioplayer
@@ -940,7 +974,7 @@ mainmenu.channels Channels
 mainmenu.clearsectionsd Clear EPG Cache
 mainmenu.games Games >
 mainmenu.head Main Menu
-mainmenu.lua Lua-Plugins >
+mainmenu.lua Lua Plugins >
 mainmenu.media Media
 mainmenu.movieplayer Movieplayer
 mainmenu.pausesectionsd Read EPG
@@ -964,7 +998,7 @@ mainsettings.audio Audio
 mainsettings.head Settings
 mainsettings.keybinding Key Setup
 mainsettings.language Language / Timezone
-mainsettings.lcd LVD/LED/LCD-Display
+mainsettings.lcd Front-Panel
 mainsettings.manage Manage settings
 mainsettings.misc Extended settings
 mainsettings.multimedia Multimedia
@@ -1077,14 +1111,14 @@ menu.hint_fileplay Play video files
 menu.hint_fileplay_setup Set file selection options.
 menu.hint_filesystem_is_utf8 Filebrowser filesystem encoding
 menu.hint_font_gui Select font file to use for GUI
-menu.hint_font_scaling Set global vertical and horizontal\nGUI font scaling
+menu.hint_font_scaling Set global vertical and horizontal GUI font scaling
 menu.hint_font_scaling_x Set global horizontal GUI font scaling factor (50% to 200%)
 menu.hint_font_scaling_y Set global vertical GUI font scaling factor (50% to 200%)
 menu.hint_font_sub Select font file to use for Movieplayer subtitles
 menu.hint_font_ttx Select font file to use for teletext
 menu.hint_fonts Configure GUI fonts and font sizes
 menu.hint_games Show list of installed games
-menu.hint_hdd Format / check hard disk drive
+menu.hint_hdd Format / check data storage
 menu.hint_hdd_apply Apply sleep/noise parameters
 menu.hint_hdd_check Check filesystem (fsck)
 menu.hint_hdd_fmt Select the data storage format
@@ -1164,7 +1198,7 @@ menu.hint_key_pip_setup Assign button to configure PiP
 menu.hint_key_pip_swap Assign button to swap PiP and live channel
 menu.hint_key_plugin Assign button to execute the one touch plugin
 menu.hint_key_poweroff Assign button to switch power state\n (standby/deepstandby <-> running)
-menu.hint_key_quickzap Configure keybingdings for quick\nchannel switch
+menu.hint_key_quickzap Configure keybindings for quick\nchannel switch
 menu.hint_key_record Assign button to start a recording
 menu.hint_key_repeatblock Delay after button press and before\nfirst key repeat
 menu.hint_key_repeatblockgeneric Delay between key repeats\nwhile button pressed
@@ -1521,6 +1555,8 @@ miscsettings.colored_events_1 current
 miscsettings.colored_events_2 next
 miscsettings.cpu CPU
 miscsettings.energy Energy
+miscsettings.epg.batch.head EPG Update
+miscsettings.epg.batch.settings EPG Update
 miscsettings.epg_cache EPG-Cache (Days)
 miscsettings.epg_cache_hint1 How long will EPG-Data in the future cached?
 miscsettings.epg_cache_hint2 Set in days.
@@ -1540,6 +1576,7 @@ miscsettings.epg_save Save EPG on shutdown
 miscsettings.epg_save_frequently Save EPG frequently
 miscsettings.epg_save_mode Favorites only
 miscsettings.epg_save_standby Save EPG on soft standby
+miscsettings.epg_saving Saving EPG data ...
 miscsettings.epg_scan EPG scan mode
 miscsettings.epg_scan_always Always
 miscsettings.epg_scan_bouquets EPG scan bouquets
@@ -1661,7 +1698,7 @@ moviebrowser.book_position Position:
 moviebrowser.book_type Jump (<0 back , >0 for):
 moviebrowser.book_type_backward Repeat
 moviebrowser.book_type_forward jump over
-moviebrowser.browser_frame_high Browser height [%]
+moviebrowser.browser_frame_high Browser hight [%]
 moviebrowser.browser_row_head Row settings
 moviebrowser.browser_row_item Row item
 moviebrowser.browser_row_nr Number of rows
@@ -1828,7 +1865,7 @@ movieplayer.fileplayback File play
 movieplayer.head Movieplayer
 movieplayer.nkplayback Netzkino
 movieplayer.starting Starting playback...
-movieplayer.stopping Stopping playback ...
+movieplayer.stopping Stopping playback...
 movieplayer.titles Titles
 movieplayer.toomanybookmarks There are too many bookmarks.\nYou need to delete one of them first.
 movieplayer.tshelp1 Stop
@@ -1894,7 +1931,7 @@ networkmenu.ssid_scan_error No WLAN networks are found.
 networkmenu.ssid_scan_wait WLAN network scan in progress...
 networkmenu.test Test network now
 networkmenu.wlan_security Security
-neutrino_starting Neutrino starting...
+neutrino_starting FFTEAM-Neutrino starting...
 nfs.alreadymounted directory already mounted
 nfs.automount Mount on startup
 nfs.dir directory/share
@@ -1966,7 +2003,7 @@ parentallock.menu Menu Security
 parentallock.never never
 parentallock.onsignal on broadcasted lock
 parentallock.parentallock Parental lock
-parentallock.prompt prompt for PIN
+parentallock.prompt Prompt for PIN
 parentallock.zaptime Zap time for locked bouquets (minutes)
 personalize.access Access options
 personalize.apply_settings Apply changes?
@@ -2050,7 +2087,7 @@ plugins.hdd_dir Plugin HDD dir.
 plugins.result plugin output
 plugintype.disabled Disabled
 plugintype.game Game
-plugintype.lua Lua plugin
+plugintype.lua Lua Plugin
 plugintype.script Script
 plugintype.tool Tool
 progressbar.color.full colored
@@ -2232,6 +2269,7 @@ screensaver.menu Screensaver
 screensaver.off Screensaver off
 screensaver.timeout Change pictures
 screensetup.lowerright green = setup lower right
+screensetup.remove remove mask
 screensetup.upperleft red = setup upper left
 screenshot.backbuffer Secondary buffer (back buffer)
 screenshot.count Screenshot count
@@ -2345,6 +2383,8 @@ three.d.tile Tile
 three.d.topbottom Top-and-Bottom
 timer.eventrecord.msg The event is scheduled for recording.\nTo edit the schedule open the timer list.
 timer.eventrecord.title Schedule Record
+timer.eventremoved.msg The recording event was removed.
+timer.eventremoved.title Cancel Event
 timer.eventtimed.msg The event is scheduled.\nThe box will power on and \nswitch to this channel at the given time.
 timer.eventtimed.title Schedule Event
 timerbar.channelswitch Schedule
@@ -2353,6 +2393,7 @@ timerlist.alarmtime Alarm time
 timerlist.apids Audio PIDs
 timerlist.apids_dflt record default audio streams
 timerlist.ask_to_delete Deletion of timer stops current recording!\n%sContinue anyway?
+timerlist.batchepg EPG Update
 timerlist.bouquetselect choose bouquet
 timerlist.channel Channel
 timerlist.channelselect choose channel
@@ -2396,7 +2437,8 @@ timerlist.standby SB mode
 timerlist.standby.off Leave standby
 timerlist.standby.on Enter standby
 timerlist.stoptime Stop time
-timerlist.type Timer type
+timerlist.type Timer typ
+timerlist.type.batchepg Update EPG
 timerlist.type.execplugin Execute plugin
 timerlist.type.nextprogram Next program
 timerlist.type.record Record
