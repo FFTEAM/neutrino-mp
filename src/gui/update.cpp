@@ -219,14 +219,11 @@ bool CFlashUpdate::selectHttpImage(void)
 	int selected = -1, listWidth = w_max (80, 10);
 	int curVer, newVer, newfound = 0;
 
-	std::vector<CUpdateMenuTarget*> update_t_list;
-
 	CConfigFile _configfile('\t');
 	const char * versionString = (_configfile.loadConfig("/.version")) ? (_configfile.getString( "version", "????????????????").c_str()) : "????????????????";
-	installedVersion = versionString;
 
 	CFlashVersionInfo curInfo(versionString);
-	printf("current flash-version: %s (%d) date %s (%ld)\n", versionString, installedVersion.c_str(), curInfo.getVersion(), curInfo.getDate(), curInfo.getDateTime());
+	printf("current flash-version: %s (%d) date %s (%ld)\n", versionString, curInfo.getVersion(), curInfo.getDate(), curInfo.getDateTime());
 	curVer = curInfo.getVersion();
 
 	httpTool.setStatusViewer(this);
@@ -275,7 +272,7 @@ bool CFlashUpdate::selectHttpImage(void)
 		}
 		//updates_lists.push_back(url.substr(startpos, endpos - startpos));
 
-		SelectionWidget.addItem(new CMenuSeparator(CMenuSeparator::STRING | CMenuSeparator::LINE, updates_lists.rbegin()->c_str(), LOCALE_FLASHUPDATE_SELECTIMAGE));
+		SelectionWidget.addItem(new CMenuSeparator(CMenuSeparator::STRING | CMenuSeparator::LINE, updates_lists.rbegin()->c_str()));
 		if (httpTool.downloadFile(url, gTmpPath LIST_OF_UPDATES_LOCAL_FILENAME, 20))
 		{
 			std::ifstream in(gTmpPath LIST_OF_UPDATES_LOCAL_FILENAME);
@@ -313,7 +310,6 @@ bool CFlashUpdate::selectHttpImage(void)
 
 				//SelectionWidget.addItem(new CMenuForwarder(names[i].c_str(), enabled, descriptions[i].c_str(), new CUpdateMenuTarget(i, &selected)));
 				CUpdateMenuTarget * up = new CUpdateMenuTarget(i, &selected);
-				update_t_list.push_back(up);
 				SelectionWidget.addItem(new CMenuDForwarder(descriptions[i].c_str(), enabled, names[i].c_str(), up));
 				i++;
 			}
@@ -335,9 +331,6 @@ bool CFlashUpdate::selectHttpImage(void)
 	}
 
 	menu_ret = SelectionWidget.exec(NULL, "");
-
-	for (std::vector<CUpdateMenuTarget*>::iterator it = update_t_list.begin(); it != update_t_list.end(); ++it)
-		delete (*it);
 
 	if (selected == -1)
 		return false;
