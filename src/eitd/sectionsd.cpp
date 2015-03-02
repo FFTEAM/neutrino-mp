@@ -94,7 +94,6 @@ static int scanning = 1;
 
 extern bool epg_filter_is_whitelist;
 extern bool epg_filter_except_current_next;
-static bool xml_epg_filter;
 
 static bool messaging_zap_detected = false;
 /*static*/ bool dvb_time_update = false;
@@ -2184,7 +2183,7 @@ bool CEitManager::Start()
 		config.epg_cache, config.epg_extendedcache, config.epg_max_events, config.epg_old_events);
 	printf("[sectionsd] NTP: %s, server %s, command %s\n", ntpenable ? "enabled" : "disabled", ntpserver.c_str(), ntp_system_cmd_prefix.c_str());
 
-	xml_epg_filter = readEPGFilter();
+	readEPGFilter();
 
 	if (!sectionsd_server.prepare(SECTIONSD_UDS_NAME)) {
 		fprintf(stderr, "[sectionsd] failed to prepare basic server\n");
@@ -2941,8 +2940,6 @@ unsigned CEitManager::getEventsCount()
 void CEitManager::addChannelFilter(t_original_network_id onid, t_transport_stream_id tsid, t_service_id sid)
 {
 	OpenThreads::ScopedLock<OpenThreads::Mutex> slock(filter_mutex);
-	if (xml_epg_filter)
-		return;
 	epg_filter_except_current_next = true;
 	epg_filter_is_whitelist = true;
 	addEPGFilter(onid, tsid, sid);
@@ -2951,8 +2948,6 @@ void CEitManager::addChannelFilter(t_original_network_id onid, t_transport_strea
 void CEitManager::clearChannelFilters()
 {
 	OpenThreads::ScopedLock<OpenThreads::Mutex> slock(filter_mutex);
-	if (xml_epg_filter)
-		return;
 	clearEPGFilter();
 	epg_filter_is_whitelist = false;
 }

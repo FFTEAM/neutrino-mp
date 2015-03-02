@@ -39,11 +39,13 @@ AM_CPPFLAGS += \
 noinst_LIBRARIES = libtimerlist.a libneutrino_gui.a libneutrino_gui2.a
 
 libneutrino_gui_a_SOURCES = \
+	adzap.cpp \
 	audio_select.cpp \
 	audio_setup.cpp \
 	audiomute.cpp \
 	audioplayer.cpp \
 	audioplayer_setup.cpp\
+	bluepanel.cpp \
 	bookmarkmanager.cpp \
 	bouquetlist.cpp \
 	buildinfo.cpp \
@@ -55,6 +57,7 @@ libneutrino_gui_a_SOURCES = \
 	eventlist.cpp \
 	favorites.cpp \
 	filebrowser.cpp \
+	filebrowser_setup.cpp \
 	imageinfo.cpp \
 	info_menue.cpp \
 	infoviewer.cpp \
@@ -120,6 +123,11 @@ endif
 if ENABLE_GRAPHLCD
 libneutrino_gui_a_SOURCES += \
 	glcdsetup.cpp
+endif
+
+if ENABLE_SHAIRPLAY
+libneutrino_gui_a_SOURCES += \
+	shairplay_setup.cpp
 endif
 
 if ENABLE_EXTUPDATE

@@ -153,7 +153,7 @@ class CRCInput
 #ifdef HAVE_DUCKBOX_HARDWARE
 #define NUMBER_OF_EVENT_DEVICES 1
 #else
-#define NUMBER_OF_EVENT_DEVICES 1
+#define NUMBER_OF_EVENT_DEVICES 1 // this is currently valid for all supported platforms
 #endif
 #endif
 		int         	fd_rc[NUMBER_OF_EVENT_DEVICES];
@@ -248,7 +248,11 @@ class CRCInput
 #endif
 			RC_rewind	= KEY_REWIND,
 			RC_stop		= KEY_STOP,
+#if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE /* evremote don't use forward */
+			RC_timeshift	= KEY_T,
+#else
 			RC_timeshift	= KEY_TIME,
+#endif
 			RC_mode		= KEY_MODE,
 			RC_games	= KEY_GAMES,
 			RC_next		= KEY_NEXT,
@@ -257,7 +261,23 @@ class CRCInput
 			RC_sub		= KEY_SUBTITLE,
 			RC_pos		= KEY_MOVE,
 			RC_sleep	= KEY_SLEEP,
+
+			/* SPARK keys */
+			RC_find		= KEY_FIND,
+			RC_pip		= KEY_PRESENTATION,
+			RC_archive	= KEY_ARCHIVE,
+			RC_fastforward	= KEY_FASTFORWARD,
+			RC_slow		= KEY_SLOW,
 			RC_playmode	= KEY_P,
+			RC_usb		= KEY_CLOSE,
+			RC_f1		= KEY_F1,
+			RC_f2		= KEY_F2,
+			RC_f3		= KEY_F3,
+			RC_f4		= KEY_F4,
+			RC_prog1	= KEY_PROG1,
+			RC_prog2	= KEY_PROG2,
+			RC_prog3	= KEY_PROG3,
+			RC_prog4	= KEY_PROG4,
 
 			RC_power_on	= KEY_POWERON,
 			RC_power_off	= KEY_POWEROFF,

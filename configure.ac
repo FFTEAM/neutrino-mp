@@ -3,7 +3,6 @@ AM_INIT_AUTOMAKE([1.0.1 nostdinc])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
 
 TUXBOX_APPS
-TUXBOX_APPS_DVB
 TUXBOX_APPS_DIRECTORY
 TUXBOX_APPS_PKGCONFIG
 TUXBOX_BOXTYPE
@@ -13,20 +12,29 @@ AC_PROG_CXX
 AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 
-# Add build information to config.h
-# ---------------------------------
-
-# Add host to config.h
-AC_DEFINE_UNQUOTED(USED_BUILD, ["$build"], [Build system under which the program was compiled on.])
-
-# Add used CXXFLAGS to config.h
-AC_DEFINE_UNQUOTED(USED_CXXFLAGS, ["$CXXFLAGS"], [Define to the used CXXFLAGS to compile this package.])
-
-# Get compiler (version)
-AH_TEMPLATE(USED_COMPILER, [Define to name and version of used compiler])
+# Add build information to local_build_config.h.tmp
+# -------------------------------------------------
+rm -f local_build_config.h.tmp
+cat > local_build_config.h.tmp << EOF
+/* Build system under which the program was compiled on. */
+#define USED_BUILD "$build"
+/* Define to the used CXXFLAGS to compile this package. */
+#define USED_CXXFLAGS "$CXXFLAGS"
+EOF
 if COMPILER=`$CC --version | head -n 1`; then
-    AC_DEFINE_UNQUOTED(USED_COMPILER, ["$COMPILER"])
+	cat >> local_build_config.h.tmp <<-EOF
+	/* Define to name and version of used compiler */
+	#define USED_COMPILER "$COMPILER"
+	EOF
 fi
+# only update header if it differs to avoid unnecessary rebuilds
+if ! diff local_build_config.h.tmp local_build_config.h >/dev/null 2>&1; then
+	rm -f local_build_config.h
+	mv local_build_config.h.tmp local_build_config.h
+else
+	rm -f local_build_config.h.tmp
+fi
+
 
 AC_ARG_ENABLE(ffmpegdec,
 	AS_HELP_STRING(--enable-ffmpegdec,include ffmpeg decoder support),
@@ -86,27 +94,26 @@ if test "$BOXTYPE" = "tripledragon"; then
 fi
 
 AM_CONDITIONAL(USE_TREMOR, test "$TREMOR" = "yes")
-
-# TUXBOX_APPS_LIB_PKGCONFIG(OPENSSL,openssl)
-TUXBOX_APPS_LIB_PKGCONFIG(CURL,libcurl)
-TUXBOX_APPS_LIB_PKGCONFIG(FREETYPE,freetype2)
-# fallback to curl-config (which is ugly for cross-compilation)
-if test -z "$CURL_LIBS" -a -z "$CURL_CFLAGS"; then
-	TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
-fi
-# fallback to freetype-config (which is ugly for cross-compilation)
-if test -z "$FREETYPE_LIBS" -a -z "$FREETYPE_CFLAGS"; then
-	TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
-fi
+TUXBOX_APPS_LIB_CONFIG(CURL,curl-config)
+TUXBOX_APPS_LIB_CONFIG(FREETYPE,freetype-config)
 
 TUXBOX_APPS_LIB_PKGCONFIG(PNG,libpng)
 TUXBOX_APPS_LIB_PKGCONFIG(AVFORMAT,libavformat)
 TUXBOX_APPS_LIB_PKGCONFIG(AVCODEC,libavcodec)
 TUXBOX_APPS_LIB_PKGCONFIG(AVUTIL,libavutil)
 TUXBOX_APPS_LIB_PKGCONFIG(SWRESAMPLE,libswresample)
-if test "$BOXTYPE" = "coolstream"; then
-	TUXBOX_APPS_LIB_PKGCONFIG(BLURAY,libbluray)
-fi
+# either use dynamic lualib in package lua (openSUSE)
+# ... or in package lua5.2 (debian-derivates)
+# ... and if all fails, assume it is in the linker path (cross build)
+PKG_CHECK_MODULES([LUA], [lua >= 5.2], echo "lua >= 5.2 found", [
+	PKG_CHECK_MODULES([LUA], [lua5.2 >= 5.2], echo "lua5.2 found", [
+		echo "=> lualib not found, assuming static lua in linker path..."
+		LUA_LIBS="-llua -ldl"
+		AC_DEFINE(STATIC_LUAPOSIX,1,[Define to 1 for static lua build.])
+	])
+])
+
+TUXBOX_APPS_LIB_PKGCONFIG(BLURAY,libbluray)
 TUXBOX_APPS_LIB_PKGCONFIG(SIGC,sigc++-2.0)
 
 #TUXBOX_APPS_LIB_PKGCONFIG(CONFIGFILE,tuxbox-configfile)
@@ -133,9 +140,11 @@ AC_ARG_ENABLE(mdev,
 	[  --enable-mdev disable broken neutrino mount hack, use with mdev],
 	[AC_DEFINE(ASSUME_MDEV,1,[disable broken neutrino mount hack, use with mdev])])
 
-AC_ARG_ENABLE(freesatepg,
-	[  --enable-freesatepg                  enable Freesat EPG code (experimental)],
-	[AC_DEFINE(ENABLE_FREESATEPG,1,[enable Freesat EPG code])])
+AC_DEFINE(ENABLE_FREESATEPG,1,[enable Freesat EPG code])
+AM_CONDITIONAL(ENABLE_FREESATEPG, test "$ENABLE_FREESATEPG")
+
+AC_DEFINE(ENABLE_VIASATEPG,1,[enable Viasat EPG code])
+AM_CONDITIONAL(ENABLE_VIASATEPG, test "$ENABLE_VIASATEPG")
 
 AC_ARG_ENABLE(fastscan,
 	AS_HELP_STRING(--enable-fastscan,include FASTSCAN support),
@@ -149,6 +158,15 @@ AC_ARG_ENABLE(graphlcd,
 AM_CONDITIONAL(ENABLE_GRAPHLCD,test "$enable_graphlcd" = "yes")
 if test "$enable_graphlcd" = "yes"; then
 	AC_DEFINE(ENABLE_GRAPHLCD,1,[include GraphLCD support])
+fi
+
+AC_ARG_ENABLE(shairplay,
+	[  --enable-shairplay                    enable ShairPlay support],
+	[AC_DEFINE(ENABLE_SHAIRPLAY,1,[enable ShairPlay support])])
+
+AM_CONDITIONAL(ENABLE_SHAIRPLAY,test "$enable_shairplay" = "yes")
+if test "$enable_shairplay" = "yes"; then
+	AC_DEFINE(ENABLE_SHAIRPLAY,1,[include ShairPlay support])
 fi
 
 AC_ARG_ENABLE(giflib,
@@ -204,17 +222,6 @@ if test "$BOXTYPE" != coolstream; then
 	fi
 	HWLIB_CFLAGS="-I$STB_HAL_INC"
 fi
-
-# either use dynamic lualib in package lua (openSUSE)
-# ... or in package lua5.2 (debian-derivates)
-# ... and if all fails, assume it is in the linker path (cross build)
-PKG_CHECK_MODULES([LUA], [lua >= 5.2], echo "lua >= 5.2 found", [
-	PKG_CHECK_MODULES([LUA], [lua5.2 >= 5.2], echo "lua5.2 found", [
-		echo "=> lualib not found, assuming static lua in linker path..."
-		LUA_LIBS="-llua -ldl"
-		AC_DEFINE(STATIC_LUAPOSIX,1,[Define to 1 for static lua build.])
-	])
-])
 
 AC_ARG_ENABLE(cleanup,
 	[  --enable-cleanup                  enable cleanup on exit],
@@ -293,6 +300,7 @@ lib/libtuxtxt/Makefile
 lib/libdvbsub/Makefile
 lib/libupnpclient/Makefile
 lib/libiw/Makefile
+lib/jsoncpp/Makefile
 lib/luaclient/Makefile
 src/lcddisplay/Makefile
 src/nhttpd/Makefile
@@ -319,6 +327,7 @@ src/system/mtdutils/Makefile
 src/system/mtdutils/lib/Makefile
 data/Makefile
 data/fonts/Makefile
+data/freesatepg/Makefile
 data/icons/Makefile
 data/inetradio/Makefile
 data/initial/Makefile

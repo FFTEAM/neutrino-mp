@@ -26,6 +26,9 @@
 #ifndef __lcdd__
 #define __lcdd__
 
+#include <system/settings.h>
+#include <audio_td.h>
+
 #define LCDDIR_VAR "/var/share/tuxbox/neutrino/lcdd"
 
 typedef enum
@@ -69,7 +72,7 @@ typedef enum
 } fp_icon;
 #define CVFD CLCD
 
-#ifdef BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
 typedef enum
 {
 	SPARK_PLAY_FASTBACKWARD = 1,
@@ -119,6 +122,7 @@ typedef enum
 #endif // LCD_UPDATE
 
 #include <pthread.h>
+#include <semaphore.h>
 #include <string>
 
 #ifdef HAVE_TRIPLEDRAGON
@@ -232,6 +236,8 @@ class CLCD
 		          const char * fontfile3=NULL, const char * fontname3=NULL); 
 
 		void setMode(const MODES m, const char * const title = "");
+		void setAudioMode(AUDIO_FORMAT streamtype);
+		void setAudioMode(void);
 		MODES getMode() { return mode; };
 		void setHddUsage(int perc);
 
@@ -252,6 +258,8 @@ class CLCD
 		void showAudioProgress(const char perc, bool isMuted = false);
 		void setBrightness(int);
 		int getBrightness();
+		void setLiveFE(char fe);
+		void setCA(bool onoff);
 
 		void setBrightnessStandby(int);
 		int getBrightnessStandby();
@@ -280,7 +288,7 @@ class CLCD
 		void Lock();
 		void Unlock();
 		void Clear();
-#ifdef BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE || BOXMODEL_SPARK7162
 		void SetIcons(int icon, bool show);
 		void UpdateIcons();
 		void ShowDiskLevel();

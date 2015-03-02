@@ -434,7 +434,7 @@ void CHDDMenuHandler::showHint(std::string &message)
 
 void CHDDMenuHandler::setRecordPath(std::string &dev)
 {
-	std::string newpath = std::string(MOUNT_BASE) + dev + "/movie";
+	std::string newpath = std::string(MOUNT_BASE) + dev + "/movies";
 	if (g_settings.network_nfs_recordingdir == newpath) {
 		printf("CHDDMenuHandler::setRecordPath: recordingdir already set to %s\n", newpath.c_str());
 		return;
@@ -1084,7 +1084,7 @@ _remount:
 					dst = it->mountpoint;
 				}
 			}
-			snprintf(cmd, sizeof(cmd), "%s/movie", dst.c_str());
+			snprintf(cmd, sizeof(cmd), "%s/movies", dst.c_str());
 			safe_mkdir(cmd);
 			snprintf(cmd, sizeof(cmd), "%s/timeshift", dst.c_str());
 			safe_mkdir(cmd);
@@ -1267,7 +1267,7 @@ int CHDDDestExec::exec(CMenuTarget* /*parent*/, const std::string&)
 
 		if (removable) {
 			// show USB icon, no need for hdparm/hd-idle
-#if HAVE_DUCKBOX_HARDWARE || BOXMODEL_SPARK7162
+#if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE || BOXMODEL_SPARK7162
 			CVFD::getInstance()->ShowIcon(FP_ICON_USB, true);
 #endif
 			printf("CHDDDestExec: /dev/%s is not a hdd, no sleep needed\n", namelist[i]->d_name);

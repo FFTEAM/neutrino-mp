@@ -3,6 +3,7 @@
 
         Copyright (C) 2011-2014 CoolStream International Ltd
 
+	Copyright (C) 2010-2012, 2014 Stefan Seyfried
 	based on code which is
 	Copyright (C) 2002 Andreas Oberritter <obi@tuxbox.org>
 	Copyright (C) 2001 TripleDES
@@ -57,6 +58,10 @@
 #include <driver/record.h>
 #include <driver/genpsi.h>
 #include <system/set_threadname.h>
+#include <pwrmngr.h>
+
+/* defined in neutrino.cpp */
+extern cCpuFreqManager * cpuFreq;
 
 /* experimental mode:
  * stream not possible, if record running

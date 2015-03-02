@@ -343,7 +343,7 @@ std::string find_executable(const char *name)
 	if (tmpPath)
 		path = strdupa(tmpPath);
 	else
-		path = strdupa("/bin:/usr/bin:/sbin:/usr/sbin");
+		path = strdupa("/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	if (name[0] == '/') { /* full path given */
 		if (!access(name, X_OK) && !stat(name, &s) && S_ISREG(s.st_mode))
 			return std::string(name);
@@ -478,7 +478,7 @@ std::string& str_replace(const std::string &search, const std::string &replace, 
 	return text;
 }
 
-std::string& htmlEntityDecode(std::string& text)
+std::string& htmlEntityDecode(std::string& text, bool removeTags)
 {
 	struct decode_table {
 		const char* code;

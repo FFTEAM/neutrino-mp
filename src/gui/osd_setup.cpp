@@ -37,6 +37,7 @@
 #include <neutrino.h>
 #include <mymenu.h>
 #include <neutrino_menue.h>
+#include <cs_api.h>
 
 #include "osd_setup.h"
 #include "themes.h"
@@ -61,8 +62,8 @@
 
 #include <zapit/femanager.h>
 #include <system/debug.h>
-#include <cs_api.h>
 #include <system/helpers.h>
+#include "cs_api.h"
 
 extern CRemoteControl * g_RemoteControl;
 
@@ -899,6 +900,7 @@ void COsdSetup::showOsdTimeoutSetup(CMenuWidget* menu_timeout)
 	{
 		CMenuOptionNumberChooser *ch = new CMenuOptionNumberChooser(timing_setting[i].name, &g_settings.timing[i], true, 0, 180);
 		ch->setNumberFormat(nf);
+		ch->setNumericInput(true);
 		ch->setHint("", LOCALE_MENU_HINT_OSD_TIMING);
 		menu_timeout->addItem(ch);
 	}
@@ -946,6 +948,11 @@ void COsdSetup::showOsdMenusSetup(CMenuWidget *menu_menus)
 	mc = new CMenuOptionChooser(LOCALE_SETTINGS_MENU_HINTS, &show_menu_hints, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true, this);
 	mc->setHint("", LOCALE_MENU_HINT_MENU_HINTS);
 	submenu_menus->addItem(mc);
+
+	// numeric direct keys as numbers or icons
+	mc = new CMenuOptionChooser(LOCALE_MENU_NUMBERS_AS_ICONS, &g_settings.menu_numbers_as_icons, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true);
+	mc->setHint("", LOCALE_MENU_HINT_MENU_NUMBERS_AS_ICONS);
+	submenu_menus->addItem(mc);
 }
 
 #define HDD_STATFS_OPTION_COUNT 3
@@ -982,6 +989,11 @@ void COsdSetup::showOsdInfobarSetup(CMenuWidget *menu_infobar)
 	CMenuForwarder * mf = new CMenuForwarder(LOCALE_MISCSETTINGS_INFOBAR_LOGO_HDD_DIR, true, g_settings.logo_hdd_dir, this, "logo_dir");
 	mf->setHint("", LOCALE_MENU_HINT_INFOBAR_LOGO_DIR);
 	menu_infobar->addItem(mf);
+
+	// rename logos to channelname
+	mc = new CMenuOptionChooser(LOCALE_MISCSETTINGS_RENAME_PICONS, &g_settings.logo_rename_to_channelname, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true);
+	mc->setHint("", LOCALE_MENU_HINT_RENAME_PICONS);
+	menu_infobar->addItem(mc);
 
 	// satellite
 	mc = new CMenuOptionChooser(LOCALE_MISCSETTINGS_INFOBAR_SAT_DISPLAY, &g_settings.infobar_sat_display, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true);
@@ -1121,6 +1133,7 @@ void COsdSetup::showOsdVolumeSetup(CMenuWidget *menu_volume)
 	int vMin = CVolumeHelper::getInstance()->getVolIconHeight();
 	g_settings.volume_size = max(g_settings.volume_size, vMin);
 	CMenuOptionNumberChooser * nc = new CMenuOptionNumberChooser(LOCALE_EXTRA_VOLUME_SIZE, &g_settings.volume_size, true, vMin, 50);
+	nc->setNumericInput(true);
 	nc->setHint("", LOCALE_MENU_HINT_VOLUME_SIZE);
 	menu_volume->addItem(nc);
 
@@ -1318,6 +1331,7 @@ void COsdSetup::showOsdScreenShotSetup(CMenuWidget *menu_screenshot)
 	menu_screenshot->addItem(mf);
 
 	CMenuOptionNumberChooser * nc = new CMenuOptionNumberChooser(LOCALE_SCREENSHOT_COUNT, &g_settings.screenshot_count, true, 1, 5, NULL);
+	nc->setNumericInput(true);
 	nc->setHint("", LOCALE_MENU_HINT_SCREENSHOT_COUNT);
 	menu_screenshot->addItem(nc);
 

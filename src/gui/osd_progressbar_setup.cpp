@@ -3,7 +3,6 @@
 	Copyright (C) 2001 by Steffen Hehn 'McClean'
 
 	progressbar_setup menu
-	Suggested by tomworld
 
 	License: GPL
 
@@ -93,7 +92,6 @@ int CProgressbarSetup::exec(CMenuTarget* parent, const std::string &actionKey)
 
 	if (parent)
 		parent->hide();
-
 	return showMenu();
 }
 

@@ -5,7 +5,6 @@
 
   (C) 2002-2008 the tuxbox project contributors
   (C) 2008 Novell, Inc. Author: Stefan Seyfried
-  (C) 2011-2013 Stefan Seyfried
 
   Homepage: http://dbox.cyberphoria.org/
 
@@ -30,8 +29,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -74,7 +72,11 @@ extern CPictureViewer * g_PicViewer;
 #include <system/settings.h>
 #include <system/helpers.h>
 #include <driver/screen_max.h>
-
+#if HAVE_COOL_HARDWARE
+#include <audio_cs.h>
+#else
+#include <audio_td.h>
+#endif
 #include <algorithm>
 #include <sys/time.h>
 #include <fstream>
@@ -202,11 +204,9 @@ void CAudioPlayerGui::Init(void)
 		audiofilefilter.addFilter("ogg");
 		audiofilefilter.addFilter("wav");
 		audiofilefilter.addFilter("flac");
-#ifdef ENABLE_FFMPEGDEC
 		audiofilefilter.addFilter("aac");
 		audiofilefilter.addFilter("dts");
 		audiofilefilter.addFilter("m4a");
-#endif
 	}
 	m_SMSKeyInput.setTimeout(AUDIOPLAYERGUI_SMSKEY_TIMEOUT);
 }
@@ -336,6 +336,7 @@ int CAudioPlayerGui::show()
 	m_frameBuffer->paintBackground();
 
 	CVFD::getInstance()->setMode(CVFD::MODE_AUDIO);
+	CVFD::getInstance()->setAudioMode(AUDIO_FMT_MP3);
 	paintLCD();
 
 	bool loop = true;
@@ -783,8 +784,7 @@ int CAudioPlayerGui::show()
 					w = std::max(w, g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->getRenderWidth(selectedKey));
 					m_frameBuffer->paintBoxRel(x1 - 7, y1 - h - 5, w + 14, h + 10, COL_MENUCONTENT_PLUS_6, RADIUS_SMALL);
 					m_frameBuffer->paintBoxRel(x1 - 4, y1 - h - 3, w +  8, h +  6, COL_MENUCONTENTSELECTED_PLUS_0, RADIUS_SMALL);
-					g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]
-						->RenderString(x1,y1,w+1,selectedKey,COL_MENUCONTENTSELECTED_TEXT);
+					g_Font[SNeutrinoSettings::FONT_TYPE_CHANNEL_NUM_ZAP]->RenderString(x1,y1,w+1,selectedKey,COL_MENUCONTENTSELECTED_TEXT);
 
 					g_RCInput->getMsg_ms(&msg, &data, AUDIOPLAYERGUI_SMSKEY_TIMEOUT - 200);
 
@@ -861,6 +861,7 @@ int CAudioPlayerGui::show()
 	if (m_state != CAudioPlayerGui::STOP)
 		stop();
 
+	CVFD::getInstance()->setAudioMode();
 	return ret;
 }
 
@@ -1261,9 +1262,7 @@ bool CAudioPlayerGui::openFilebrowser(void)
 					||  (files->getType() == CFile::FILE_OGG)
 					||  (files->getType() == CFile::FILE_MP3)
 					||  (files->getType() == CFile::FILE_WAV)
-#ifdef ENABLE_FFMPEGDEC
 					||  (files->getType() == CFile::FILE_AAC)
-#endif
 					||  (files->getType() == CFile::FILE_FLAC)
 			   )
 			{
@@ -2225,6 +2224,7 @@ void CAudioPlayerGui::paintLCD()
 		break;
 	}
 }
+
 void CAudioPlayerGui::screensaver(bool on)
 {
 	if (on)
@@ -2697,7 +2697,7 @@ bool CAudioPlayerGui::askToOverwriteFile(const std::string& filename)
 		 g_Locale->getText(LOCALE_AUDIOPLAYER_PLAYLIST_FILEOVERWRITE_MSG),
 		 filename.c_str());
 	bool res = (ShowMsg(LOCALE_AUDIOPLAYER_PLAYLIST_FILEOVERWRITE_TITLE,
-			       msg,CMessageBox::mbrYes, CMessageBox::mbYes | CMessageBox::mbNo)
+			       msg, CMessageBox::mbrYes, CMessageBox::mbYes | CMessageBox::mbNo)
 		    == CMessageBox::mbrYes);
 	this->paint();
 	return res;

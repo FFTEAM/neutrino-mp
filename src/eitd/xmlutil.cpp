@@ -190,7 +190,7 @@ static void addNoDVBTimelist(t_original_network_id onid, t_transport_stream_id t
 	}
 }
 
-bool readEPGFilter(void)
+void readEPGFilter(void)
 {
 	xmlDocPtr filter_parser = parseXmlFile(epg_filter_dir.c_str());
 
@@ -223,7 +223,6 @@ bool readEPGFilter(void)
 		}
 	}
 	xmlFreeDoc(filter_parser);
-	return (CurrentEPGFilter != NULL);
 }
 
 void readDVBTimeFilter(void)
@@ -562,10 +561,11 @@ _done:
 	write_indexxml_footer(indexfile);
 	fclose(indexfile);
 
+	printf("[sectionsd] Writing Information finished\n");
+
 	filename  = (std::string)epgdir + "/index.xml";
+
 	rename(tmpname.c_str(), filename.c_str());
 
-	sync();
-	printf("[sectionsd] Writing Information finished\n");
 	return ;
 }

@@ -55,6 +55,7 @@ class CFlashUpdate : public CProgressWindow
 	int 	width;
 	bool	notify;
 	
+	std::string installedVersion;
 	std::string newVersion;
 	int	menu_ret;
 	int softupdate_mode;

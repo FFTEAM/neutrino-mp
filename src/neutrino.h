@@ -33,10 +33,17 @@
 #ifndef __neutrino__
 #define __neutrino__
 
+#include "config.h"
+
+#include <configfile.h>
+
 #include <neutrinoMessages.h>
+#include "system/setting_helpers.h"
+#include "system/configure_network.h"
 #include "daemonc/remotecontrol.h"    /* st_rmsg      */
 #include "gui/channellist.h"          /* CChannelList */
 #include "gui/personalize.h"
+#include "gui/rc_lock.h"
 #include "gui/user_menue.h"
 #include <timerdclient/timerdtypes.h>
 
@@ -56,7 +63,7 @@ extern const neutrino_locale_t * genre_sub_classes_list[]; /* epgview.cpp */
 class CFrameBuffer;
 class CConfigFile;
 class CScanSettings;
-
+class CShairPlay;
 class CNeutrinoApp : public CMenuTarget, CChangeObserver
 {
 public:
@@ -79,7 +86,7 @@ private:
 	CUserMenu 			usermenu;
 	int                             network_dhcp;
 	int                             network_automatic_start;
-
+	CMenuWidget			*mainMenu;
 	int				m_idletime;
 	bool				m_screensaver;
 
@@ -171,6 +178,11 @@ public:
 	CChannelList			*TVchannelList;
 	CChannelList			*RADIOchannelList;
 	CChannelList			*channelList;
+#if ENABLE_SHAIRPLAY
+	CShairPlay			*shairPlay;
+	bool				shairplay_active;
+	bool				shairplay_enabled_cur;
+#endif
 	bool				timer_wakeup;
 
 	static CNeutrinoApp* getInstance();
@@ -222,6 +234,10 @@ public:
 	void stopDaemonsForFlash();
 	int showChannelList(const neutrino_msg_t msg, bool from_menu = false);
 	CPersonalizeGui & getPersonalizeGui() { return personalize; }
+
+	void setTheme(CConfigFile &themefile);
+	void getTheme(CConfigFile &themefile);
+
 	bool getChannellistIsVisible() { return channellist_visible; }
 	void zapTo(t_channel_id channel_id);
 #if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE

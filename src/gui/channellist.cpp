@@ -50,7 +50,6 @@
 #include <gui/color.h>
 #include <gui/epgview.h>
 #include <gui/eventlist.h>
-#include <gui/infoviewer.h>
 #include <gui/osd_setup.h>
 #include <gui/components/cc.h>
 #include <gui/widget/stringinput.h>
@@ -1105,7 +1104,7 @@ int CChannelList::handleMsg(const neutrino_msg_t msg, neutrino_msg_data_t data, 
 out:
 	if (startvideo) {
 #ifdef ENABLE_PIP
-		if(pip) {
+		if (pip) {
 			if (CNeutrinoApp::getInstance()->StartPip((*chanlist)[selected]->getChannelID())) {
 				calcSize();
 				paint();
@@ -1457,8 +1456,8 @@ CZapitChannel* CChannelList::getPrevNextChannel(int key, unsigned int &sl)
 		}
 		sl = cactive;
 		channel = bouquetList->Bouquets[bactive]->channelList->getChannelFromIndex(cactive);
-		printf("CChannelList::getPrevNextChannel: selected %d total %d active bouquet %d total %d channel %p (%s)\n",
-				(int)cactive, (int)(*chanlist).size(), bactive, bsize, channel, channel ? channel->getName().c_str(): "");
+		printf("CChannelList::getPrevNextChannel: selected %u total %d active bouquet %d total %d channel %p (%s)\n",
+				(unsigned int) cactive, (unsigned int) (*chanlist).size(), (int) bactive, (int) bsize, channel, channel ? channel->getName().c_str(): "");
 	} else {
 #if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE
 		if ((key == g_settings.key_quickzap_down) || (key == CRCInput::RC_left) || (key == CRCInput::RC_page_down)) {

@@ -45,6 +45,7 @@
 #endif
 
 
+#define VOLUME_SCRIPT	CONFIGDIR "/volume.sh"
 extern CRemoteControl * g_RemoteControl;
 extern cAudio * audioDecoder;
 
