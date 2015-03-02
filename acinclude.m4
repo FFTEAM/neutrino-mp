@@ -536,6 +536,13 @@ AC_ARG_WITH(boxmodel,
 				AC_MSG_ERROR([unknown model $withval for boxtype $BOXTYPE])
 			fi
 			;;
+		raspi)
+			if test "$BOXTYPE" = "generic"; then
+				BOXMODEL="$withval"
+			else
+				AC_MSG_ERROR([unknown model $withval for boxtype $BOXTYPE])
+			fi
+			;;
 		*)
 			AC_MSG_ERROR([unsupported value $withval for --with-boxmodel])
 			;;
@@ -591,6 +598,8 @@ AM_CONDITIONAL(BOXMODEL_CUBEREVO_MINI2,test "$BOXMODEL" = "cuberevo_mini2")
 AM_CONDITIONAL(BOXMODEL_CUBEREVO_250HD,test "$BOXMODEL" = "cuberevo_250hd")
 AM_CONDITIONAL(BOXMODEL_CUBEREVO_2000HD,test "$BOXMODEL" = "cuberevo_2000hd")
 AM_CONDITIONAL(BOXMODEL_TF7700,test "$BOXMODEL" = "tf7700")
+
+AM_CONDITIONAL(BOXMODEL_RASPI,test "$BOXMODEL" = "raspi")
 
 if test "$BOXTYPE" = "dbox2"; then
 	AC_DEFINE(HAVE_DBOX_HARDWARE, 1, [building for a dbox2])
@@ -665,6 +674,8 @@ elif test "$BOXMODEL" = "cuberevo_2000hd"; then
 	AC_DEFINE(BOXMODEL_CUBEREVO_2000HD, 1, [cuberevo_2000hd])
 elif test "$BOXMODEL" = "tf7700"; then
 	AC_DEFINE(BOXMODEL_TF7700, 1, [tf7700])
+elif test "$BOXMODEL" = "raspi"; then
+	AC_DEFINE(BOXMODEL_RASPI, 1, [Raspberry pi])
 fi
 ])
 
