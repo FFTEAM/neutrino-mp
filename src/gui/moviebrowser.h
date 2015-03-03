@@ -349,12 +349,14 @@ class CMovieBrowser : public CMenuTarget
 		int movieInfoUpdateAllIfDestEmptyOnly;
 
 		std::vector<std::string> PicExts;
-		std::string getScreenshotName(std::string movie, bool is_dir = false);
+		std::string getScreenshotName(std::string movie);
 
+		//bool restart_mb_timeout;
 		int menu_ret;
 
 		cNKFeedParser nkparser;
 		std::string nkcategory_name;
+
 		cYTFeedParser ytparser;
 		int show_mode;
 		CMenuWidget *yt_menue;
@@ -376,6 +378,7 @@ class CMovieBrowser : public CMenuTarget
 		bool showNKMenu(bool calledExternally = false);
 
 	public:  // Functions //////////////////////////////////////////////////////////7
+		CMovieBrowser(const char* path); //P1
 		CMovieBrowser(); //P1
 		~CMovieBrowser(); //P1
 		int exec(const char* path); //P1
@@ -389,15 +392,15 @@ class CMovieBrowser : public CMenuTarget
 		void fileInfoStale(void); // call this function to force the Moviebrowser to reload all movie information from HD
 
 		bool readDir(const std::string & dirname, CFileList* flist);
+		bool readDir_vlc(const std::string & dirname, CFileList* flist);
+		bool readDir_std(const std::string & dirname, CFileList* flist);
 
 		bool delFile(CFile& file);
+		bool delFile_vlc(CFile& file);
+		bool delFile_std(CFile& file);
 		int  getMenuRet() { return menu_ret; }
 		int  getMode() { return show_mode; }
-		void setMode(int mode) {
-			if (show_mode != mode)
-				m_file_info_stale = true;
-			show_mode = mode; 
-		}
+		void setMode(int mode) { show_mode = mode; }
 
 	private: //Functions
 		///// MovieBrowser init ///////////////
@@ -416,6 +419,7 @@ class CMovieBrowser : public CMenuTarget
 		void refreshBrowserList(void); //P1
 		void refreshFilterList(void); //P1
 		void refreshMovieInfo(void); //P1
+		void refreshBookmarkList(void); // P3
 		int refreshFoot(bool show = true); //P2
 		void refreshTitle(void); //P2
 		void refreshInfo(void); // P2
@@ -428,6 +432,7 @@ class CMovieBrowser : public CMenuTarget
 		bool onButtonPressLastPlayList(neutrino_msg_t msg); // P2
 		bool onButtonPressLastRecordList(neutrino_msg_t msg); // P2
 		bool onButtonPressFilterList(neutrino_msg_t msg); // P2
+		bool onButtonPressBookmarkList(neutrino_msg_t msg); // P3
 		bool onButtonPressMovieInfoList(neutrino_msg_t msg); // P2
 		void markItem(CListFrame *list);
 		void scrollBrowserItem(bool next, bool page);
@@ -448,7 +453,6 @@ class CMovieBrowser : public CMenuTarget
 		void getStorageInfo(void); // P3
 
 		///// Menu ////////////////////////////////////
-		bool showMenu(bool calledExternally = false);
 		bool showMenu(MI_MOVIE_INFO* movie_info); // P2
 		int showMovieInfoMenu(MI_MOVIE_INFO* movie_info); // P2
 		int  showStartPosSelectionMenu(void); // P2
