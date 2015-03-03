@@ -221,7 +221,7 @@ do_mount()
 			cmd="mount -t nfs $ip:$dir $local_dir -o $options1"
 			;;
 		1)
-			cmd="mount -t cifs $ip/$dir $local_dir -o username=$username,password=$password,unc=//$ip/$dir,$options1";
+			cmd="mount -t cifs $ip/$dir $local_dir -o username=$username,password=$password,iocharset=utf8,unc=//$ip/$dir,$options1";
 			;;
 		2)
 			cmd="lufsd none $local_dir -o fs=ftpfs,username=$username,password=$password,host=$ip,root=/$dir,$options1";
@@ -432,7 +432,7 @@ proc()
 # -----------------------------------------------------------
 wol()
 {
-	if [ -e /usr/bin/ether-wake ]; then
+	if [ -e /bin/ether-wake ]; then
 		msg=`ether-wake $1`
 	fi
 	msg="<b>Wake on LAN $1</b><br><br>$msg"
@@ -562,6 +562,26 @@ case "$1" in
 	automount_setline)		shift 1; do_automount_setline $* ;;
 	restart_neutrino)		restart_neutrino ;;
 	have_plugin_scripts)	 find /var/tuxbox/plugins -name '*.sh' ;;
+	camdstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh camd_stop ; msg="camdstop ok." ; y_format_message_html ;;
+	camdstart)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh camd_start ; msg="camdstart ok." ; y_format_message_html ;;
+	camdreset)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh camd_reset ; msg="camdreset ok." ; y_format_message_html ;;
+	cardserverstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh cardserver_stop ; msg="cardserverstop ok." ; y_format_message_html ;;
+	cardserverstart)		/share/tuxbox/neutrino/httpd/scripts/Emu.sh cardserver_start ; msg="cardserverstart ok." ; y_format_message_html ;;
+	cardserverreset)		/share/tuxbox/neutrino/httpd/scripts/Emu.sh cardserver_reset ; msg="cardserverreset ok." ; y_format_message_html ;;
+	mgcamdstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh mgcamd_stop ; msg="mgcamdstop ok." ; y_format_message_html ;;
+	mgcamdstart)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh mgcamd_start ; msg="mgcamdstart ok." ; y_format_message_html ;;
+	mgcamdreset)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh mgcamd_reset ; msg="mgcamdreset ok." ; y_format_message_html ;;
+	gboxdstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh gbox_stop ; msg="mgcamdstop ok." ; y_format_message_html ;;
+	gboxstart)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh gbox_start ; msg="mgcamdstart ok." ; y_format_message_html ;;
+	gboxreset)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh gbox_reset ; msg="mgcamdreset ok." ; y_format_message_html ;;
+	oscamstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh oscam_stop ; msg="oscamstop ok." ; y_format_message_html ;;
+	oscamstart)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh oscam_start ; msg="oscamstart ok." ; y_format_message_html ;;
+	oscamreset)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh oscam_reset ; msg="oscamreset ok." ; y_format_message_html ;;
+	newcsstop)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh newcs_stop ; msg="newcsstop ok." ; y_format_message_html ;;
+	newcsstart)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh newcs_start ; msg="newcsstart ok." ; y_format_message_html ;;
+	newcsreset)			/share/tuxbox/neutrino/httpd/scripts/Emu.sh newcs_reset ; msg="newcsreset ok." ; y_format_message_html ;;
+	mgecm)				msg=`cat /tmp/ecm.info`; y_format_message_html ;;
+	mgpid)				msg=`cat /tmp/pid.info`; y_format_message_html ;;
 
 	timer_get_tvinfo)
 		shift 1
