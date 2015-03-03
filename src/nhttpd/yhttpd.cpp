@@ -566,6 +566,8 @@ void Cyhttpd::ReadConfig(void) {
 #endif //Y_CONFIG_USE_HOSTEDWEB
 	}
 	ConfigList["Tuxbox.LogosURL"] = Config->getString("Tuxbox.LogosURL", "");
+	ConfigList["Tuxbox.DisplayLogos"] = Config->getString("Tuxbox.DisplayLogos", "true");
+	ConfigList["Tuxbox.PidSeparator"] = Config->getString("Tuxbox.PidSeparator", ",");
 
 #ifdef Y_CONFIG_USE_OPEN_SSL
 	ConfigList["SSL"] = Config->getString("WebsiteMain.ssl", "false");
