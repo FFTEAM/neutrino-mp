@@ -34,6 +34,8 @@
 #include <cs_api.h>
 #include <system/configure_network.h>
 #include <hardware_caps.h>
+#include <system/helpers.h>
+#include <dirent.h>
 
 extern CBouquetManager *g_bouquetManager;
 
@@ -126,6 +128,7 @@ const CNeutrinoYParser::TyFuncCall CNeutrinoYParser::yFuncCallList[]=
 	{"set_timer_form",				&CNeutrinoYParser::func_set_timer_form},
 	{"bouquet_editor_main",			&CNeutrinoYParser::func_bouquet_editor_main},
 	{"set_bouquet_edit_form",		&CNeutrinoYParser::func_set_bouquet_edit_form},
+	{"get_logo_name",		&CNeutrinoYParser::func_get_logo_name},
 
 };
 //-------------------------------------------------------------------------
@@ -356,8 +359,14 @@ std::string CNeutrinoYParser::func_get_bouquets_with_epg(CyhookHandler *hh, std:
 	std::string timestr;
 	bool have_logos = false;
 
-	if(!hh->WebserverConfigList["Tuxbox.LogosURL"].empty())
-		have_logos = true;
+	if (hh->WebserverConfigList["Tuxbox.DisplayLogos"] == "true") {
+		DIR *d;
+		d = opendir(g_settings.logo_hdd_dir.c_str());
+		if (d) {
+			closedir(d);
+			have_logos = true;
+		}
+	}
 	for(int j = 0; j < (int) channels.size(); j++)
 	{
 		CZapitChannel * channel = channels[j];
@@ -1221,4 +1230,17 @@ std::string  CNeutrinoYParser::func_set_bouquet_edit_form(CyhookHandler *hh, std
 	}
 	else
 		return "No Bouquet selected";
+}
+
+//-------------------------------------------------------------------------
+// func: Get Logo Name
+//-------------------------------------------------------------------------
+std::string  CNeutrinoYParser::func_get_logo_name(CyhookHandler *hh, std::string channelId)
+{
+	if (hh->WebserverConfigList["Tuxbox.DisplayLogos"] == "true") {
+		t_channel_id cid;
+		if (1 == sscanf(channelId.c_str(), "%llx", &cid))
+			return NeutrinoAPI->getLogoFile(hh->WebserverConfigList["Tuxbox.LogosURL"] /* unused */, cid);
+	}
+	return "";
 }

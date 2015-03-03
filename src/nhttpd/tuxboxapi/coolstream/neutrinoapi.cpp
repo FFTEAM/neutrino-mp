@@ -41,6 +41,8 @@
 #include <zapit/bouquets.h>
 #include <zapit/getservices.h>
 #include <eitd/sectionsd.h>
+#include <driver/pictureviewer/pictureviewer.h>
+extern CPictureViewer *g_PicViewer;
 
 extern CBouquetManager *g_bouquetManager;
 extern CFrontend * frontend;

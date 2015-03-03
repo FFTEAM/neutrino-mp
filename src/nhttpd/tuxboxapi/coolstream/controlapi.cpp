@@ -48,6 +48,8 @@
 // nhttpd
 #include "neutrinoapi.h"
 #include "controlapi.h"
+#include <hardware_caps.h>
+#include <system/helpers.h>
 #include <video.h>
 #include <zapit/femanager.h>
 
@@ -55,10 +57,8 @@ extern cVideo * videoDecoder;
 
 extern CPlugins *g_PluginList;//for relodplugins
 extern CBouquetManager *g_bouquetManager;
-#if HAVE_DUCKBOX_HARDWARE
-#define EVENTDEV "/dev/input/event0"
-#elif HAVE_SPARK_HARDWARE
-#define EVENTDEV "/dev/input/event1"
+#if HAVE_SPARK_HARDWARE
+#define EVENTDEV "/dev/input/nevis_ir"
 #else
 #define EVENTDEV "/dev/input/input0"
 #endif
@@ -163,47 +163,47 @@ const CControlAPI::TyCgiCall CControlAPI::yCgiCallList[]=
 	{"channellist", 	&CControlAPI::ChannellistCGI,	"text/plain"},
 	{"getbouquet", 		&CControlAPI::GetBouquetCGI,	"+xml"},
 	{"getbouquets", 	&CControlAPI::GetBouquetsCGI,	"+xml"},
-	{"getmode", 		&CControlAPI::GetModeCGI,		"text/plain"},
-	{"setmode", 		&CControlAPI::SetModeCGI,		"text/plain"},
-	{"epgsearchxml", 	&CControlAPI::EpgSearchXMLCGI,			""},
-	{"epgsearch", 		&CControlAPI::EpgSearchTXTCGI,			""},
-	{"epg", 		&CControlAPI::EpgCGI,			""},
-	{"zapto", 		&CControlAPI::ZaptoCGI,			"text/plain"},
-	{"signal", 		&CControlAPI::SignalInfoCGI,			"text/plain"},
+	{"getmode", 		&CControlAPI::GetModeCGI,	"text/plain"},
+	{"setmode", 		&CControlAPI::SetModeCGI,	"text/plain"},
+	{"epgsearchxml", 	&CControlAPI::EpgSearchXMLCGI,	""},
+	{"epgsearch", 		&CControlAPI::EpgSearchTXTCGI,	""},
+	{"epg", 		&CControlAPI::EpgCGI,		""},
+	{"zapto", 		&CControlAPI::ZaptoCGI,		"text/plain"},
+	{"signal", 		&CControlAPI::SignalInfoCGI,	"text/plain"},
 	{"getonidsid", 		&CControlAPI::GetChannel_IDCGI,	"text/plain"},
-	{"currenttpchannels", 	&CControlAPI::GetTPChannel_IDCGI,	"text/plain"},
+	{"currenttpchannels", 	&CControlAPI::GetTPChannel_IDCGI,"text/plain"},
 	// boxcontrol - system
-	{"standby", 		&CControlAPI::StandbyCGI,		"text/plain"},
-	{"shutdown", 		&CControlAPI::ShutdownCGI,		"text/plain"},
-	{"reboot", 			&CControlAPI::RebootCGI,		"text/plain"},
-	{"getdate", 		&CControlAPI::GetDateCGI,		"text/plain"},
-	{"gettime", 		&CControlAPI::GetTimeCGI,		"text/plain"},
-	{"info", 			&CControlAPI::InfoCGI,			"text/plain"},
-	{"version", 		&CControlAPI::VersionCGI,		""},
-	{"reloadsetup", 	&CControlAPI::ReloadNeutrinoSetupCGI,		""},
-	{"reloadplugins", 	&CControlAPI::ReloadPluginsCGI,		""},
-	{"screenshot", 		&CControlAPI::ScreenshotCGI,		""},
+	{"standby", 		&CControlAPI::StandbyCGI,	"text/plain"},
+	{"shutdown", 		&CControlAPI::ShutdownCGI,	"text/plain"},
+	{"reboot", 		&CControlAPI::RebootCGI,	"text/plain"},
+	{"getdate", 		&CControlAPI::GetDateCGI,	"text/plain"},
+	{"gettime", 		&CControlAPI::GetTimeCGI,	"text/plain"},
+	{"info", 		&CControlAPI::InfoCGI,		"text/plain"},
+	{"version", 		&CControlAPI::VersionCGI,	""},
+	{"reloadsetup", 	&CControlAPI::ReloadNeutrinoSetupCGI,	""},
+	{"reloadplugins", 	&CControlAPI::ReloadPluginsCGI,	""},
+	{"screenshot", 		&CControlAPI::ScreenshotCGI,	""},
 	// boxcontrol - devices
-	{"volume", 			&CControlAPI::VolumeCGI,		"text/plain"},
-	{"lcd", 			&CControlAPI::LCDAction,		"text/plain"},
-	{"system", 			&CControlAPI::SystemCGI,		"text/plain"},
-	{"message", 		&CControlAPI::MessageCGI,		"text/plain"},
-	{"rc", 				&CControlAPI::RCCGI,			"text/plain"},
-	{"rcem", 			&CControlAPI::RCEmCGI,			"text/plain"},
+	{"volume", 		&CControlAPI::VolumeCGI,	"text/plain"},
+	{"lcd", 		&CControlAPI::LCDAction,	"text/plain"},
+	{"system", 		&CControlAPI::SystemCGI,	"text/plain"},
+	{"message", 		&CControlAPI::MessageCGI,	"text/plain"},
+	{"rc", 			&CControlAPI::RCCGI,		"text/plain"},
+	{"rcem", 		&CControlAPI::RCEmCGI,		"text/plain"},
 	// Start skripts, plugins
 	{"startplugin", 	&CControlAPI::StartPluginCGI,	"text/plain"},
-	{"exec", 			&CControlAPI::ExecCGI,			"+xml"},
-	{"yweb", 			&CControlAPI::YWebCGI,			"text/plain"},
+	{"exec", 		&CControlAPI::ExecCGI,		"+xml"},
+	{"yweb", 		&CControlAPI::YWebCGI,		"text/plain"},
 	// video & Audio handling
 	{"aspectratio", 	&CControlAPI::AspectRatioCGI,	"text/plain"},
 	{"videoformat", 	&CControlAPI::VideoFormatCGI,	"text/plain"},
 	{"videooutput", 	&CControlAPI::VideoOutputCGI,	"text/plain"},
-	{"vcroutput", 		&CControlAPI::VCROutputCGI,		"text/plain"},
-	{"scartmode", 		&CControlAPI::ScartModeCGI,		"text/plain"},
-	{"audio", 			&CControlAPI::AudioCGI,			"text/plain"},
-	{"crypt", 			&CControlAPI::CryptCGI,			"text/plain"},
+	{"vcroutput", 		&CControlAPI::VCROutputCGI,	"text/plain"},
+	{"scartmode", 		&CControlAPI::ScartModeCGI,	"text/plain"},
+	{"audio", 		&CControlAPI::AudioCGI,		"text/plain"},
+	{"crypt", 		&CControlAPI::CryptCGI,		"text/plain"},
 	// timer
-	{"timer", 			&CControlAPI::TimerCGI,			"text/plain"},
+	{"timer", 		&CControlAPI::TimerCGI,		"text/plain"},
 	// bouquet editing
 	{"setbouquet", 		&CControlAPI::setBouquetCGI,	"text/plain"},
 	{"savebouquet",		&CControlAPI::saveBouquetCGI,	"text/plain"},
@@ -217,9 +217,9 @@ const CControlAPI::TyCgiCall CControlAPI::yCgiCallList[]=
 	{"build_live_url",	&CControlAPI::build_live_url,	""},
 	{"get_logo",		&CControlAPI::logoCGI,	"text/plain"},
 	// settings
-	{"config",			&CControlAPI::ConfigCGI,	"text/plain"},
+	{"config",		&CControlAPI::ConfigCGI,	"text/plain"},
 	// filehandling
-	{"file",			&CControlAPI::FileCGI,	"+xml"}
+	{"file",		&CControlAPI::FileCGI,	"+xml"}
 
 
 };
@@ -635,14 +635,63 @@ void CControlAPI::InfoCGI(CyhookHandler *hh)
 
 void CControlAPI::HWInfoCGI(CyhookHandler *hh)
 {
+#if HAVE_SPARK_HARDWARE
+	std::string boxname = string(g_info.hw_caps->boxvendor) + " " + string(g_info.hw_caps->boxname);
+#else
+	unsigned int system_rev = cs_get_revision();
 	std::string boxname = NeutrinoAPI->NeutrinoYParser->func_get_boxtype(hh, "");
 	std::string boxmodel = NeutrinoAPI->NeutrinoYParser->func_get_boxmodel(hh, "");
+#endif
 
 	static CNetAdapter netadapter; 
 	std::string eth_id = netadapter.getMacAddr();
 	std::transform(eth_id.begin(), eth_id.end(), eth_id.begin(), ::tolower);
 
+#if HAVE_SPARK_HARDWARE
+	hh->printf("%s\nMAC:%s\n", boxname.c_str(),eth_id.c_str());
+#else
+#if HAVE_TRIPLEDRAGON
+	boxname = "Armas ";
+#endif
+
+	switch(system_rev)
+	{
+		case 1:
+			if( boxname == "Armas ")
+				boxname += "TripleDragon";
+			break;
+		case 6:
+			boxname += "HD1";
+			break;
+		case 7:
+			boxname += "BSE";
+			break;
+		case 8:
+			boxname += "Neo";
+			if (CFEManager::getInstance()->getFrontendCount() > 1)
+				boxname += " Twin";
+			break;
+		case 9:
+			boxname += "Tank";
+			break;
+		case 10:
+			boxname += "Zee";
+			break;
+		case 11:
+			boxname += "Trinity";
+			break;
+
+		default:
+			char buffer[10];
+			snprintf(buffer, sizeof(buffer), "%u\n", system_rev);
+			boxname += "Unknown nr. ";
+			boxname += buffer;
+			break;
+	}
+
+	boxname += (g_info.delivery_system == DVB_S || (system_rev == 1)) ? " SAT":" CABLE";
 	hh->printf("%s (%s)\nMAC:%s\n", boxname.c_str(), boxmodel.c_str(), eth_id.c_str());
+#endif
 }
 //-----------------------------------------------------------------------------
 void CControlAPI::ShutdownCGI(CyhookHandler *hh)
@@ -2302,10 +2351,12 @@ void CControlAPI::YWeb_SendRadioStreamingPid(CyhookHandler *hh)
 std::string CControlAPI::YexecuteScript(CyhookHandler *, std::string cmd)
 {
 #if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE
+    {
 	const char *fbshot = "Y_Tools fbshot fb /";
 	int len = strlen(fbshot);
 	if (!strncmp(cmd.c_str(), fbshot, len))
 		return CFrameBuffer::getInstance()->OSDShot(cmd.substr(len - 1)) ? "" : "error";
+    }
 #endif
 	std::string script, para, result;
 	bool found = false;

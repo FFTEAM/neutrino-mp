@@ -19,6 +19,7 @@
 #include <zapit/channel.h>
 #include <zapit/bouquets.h>
 #include <configfile.h>
+#include <system/helpers.h>
 // yhttpd
 #include "yhttpd.h"
 #include "ytypes_globals.h"
@@ -28,6 +29,12 @@
 #include "neutrinoapi.h"
 #include "controlapi.h"
 #include "lcdapi.h"
+
+#if HAVE_SPARK_HARDWARE
+#define EVENTDEV "/dev/input/nevis_ir"
+#else
+#define EVENTDEV "/dev/input/event0"
+#endif
 
 #if HAVE_DUCKBOX_HARDWARE
 #define EVENTDEV "/dev/event0"
@@ -140,40 +147,40 @@ const CControlAPI::TyCgiCall CControlAPI::yCgiCallList[]=
 	{"channellist", 	&CControlAPI::ChannellistCGI,	"text/plain"},
 	{"getbouquet", 		&CControlAPI::GetBouquetCGI,	"+xml"},
 	{"getbouquets", 	&CControlAPI::GetBouquetsCGI,	"text/plain"},
-	{"getmode", 		&CControlAPI::GetModeCGI,		"text/plain"},
-	{"setmode", 		&CControlAPI::SetModeCGI,		"text/plain"},
-	{"epg", 			&CControlAPI::EpgCGI,			""},
-	{"zapto", 			&CControlAPI::ZaptoCGI,			"text/plain"},
+	{"getmode", 		&CControlAPI::GetModeCGI,	"text/plain"},
+	{"setmode", 		&CControlAPI::SetModeCGI,	"text/plain"},
+	{"epg", 		&CControlAPI::EpgCGI,		""},
+	{"zapto", 		&CControlAPI::ZaptoCGI,		"text/plain"},
 	{"getonidsid", 		&CControlAPI::GetChannel_IDCGI,	"text/plain"},
 	// boxcontrol - system
-	{"standby", 		&CControlAPI::StandbyCGI,		"text/plain"},
-	{"shutdown", 		&CControlAPI::ShutdownCGI,		"text/plain"},
-	{"reboot", 			&CControlAPI::RebootCGI,		"text/plain"},
-	{"esound", 			&CControlAPI::EsoundCGI,		"text/plain"},
-	{"getdate", 		&CControlAPI::GetDateCGI,		"text/plain"},
-	{"gettime", 		&CControlAPI::GetTimeCGI,		"text/plain"},
-	{"settings", 		&CControlAPI::SettingsCGI,		"text/plain"},
-	{"info", 			&CControlAPI::InfoCGI,			"text/plain"},
-	{"version", 		&CControlAPI::VersionCGI,		""},
+	{"standby", 		&CControlAPI::StandbyCGI,	"text/plain"},
+	{"shutdown", 		&CControlAPI::ShutdownCGI,	"text/plain"},
+	{"reboot", 		&CControlAPI::RebootCGI,	"text/plain"},
+	{"esound", 		&CControlAPI::EsoundCGI,	"text/plain"},
+	{"getdate", 		&CControlAPI::GetDateCGI,	"text/plain"},
+	{"gettime", 		&CControlAPI::GetTimeCGI,	"text/plain"},
+	{"settings", 		&CControlAPI::SettingsCGI,	"text/plain"},
+	{"info", 		&CControlAPI::InfoCGI,		"text/plain"},
+	{"version", 		&CControlAPI::VersionCGI,	""},
 	// boxcontrol - devices
-	{"volume", 			&CControlAPI::VolumeCGI,		"text/plain"},
-	{"lcd", 			&CControlAPI::LCDAction,		"text/plain"},
-	{"system", 			&CControlAPI::SystemCGI,		"text/plain"},
-	{"message", 		&CControlAPI::MessageCGI,		"text/plain"},
-	{"rc", 				&CControlAPI::RCCGI,			"text/plain"},
-	{"rcem", 			&CControlAPI::RCEmCGI,			"text/plain"},
+	{"volume", 		&CControlAPI::VolumeCGI,	"text/plain"},
+	{"lcd", 		&CControlAPI::LCDAction,	"text/plain"},
+	{"system", 		&CControlAPI::SystemCGI,	"text/plain"},
+	{"message", 		&CControlAPI::MessageCGI,	"text/plain"},
+	{"rc", 			&CControlAPI::RCCGI,		"text/plain"},
+	{"rcem", 		&CControlAPI::RCEmCGI,		"text/plain"},
 	// Start skripts, plugins
 	{"startplugin", 	&CControlAPI::StartPluginCGI,	"text/plain"},
-	{"exec", 			&CControlAPI::ExecCGI,			"+xml"},
-	{"yweb", 			&CControlAPI::YWebCGI,			"text/plain"},
+	{"exec", 		&CControlAPI::ExecCGI,		"+xml"},
+	{"yweb", 		&CControlAPI::YWebCGI,		"text/plain"},
 	// video handling
 	{"aspectratio", 	&CControlAPI::AspectRatioCGI,	"text/plain"},
 	{"videoformat", 	&CControlAPI::VideoFormatCGI,	"text/plain"},
 	{"videooutput", 	&CControlAPI::VideoOutputCGI,	"text/plain"},
-	{"vcroutput", 		&CControlAPI::VCROutputCGI,		"text/plain"},
-	{"scartmode", 		&CControlAPI::ScartModeCGI,		"text/plain"},
+	{"vcroutput", 		&CControlAPI::VCROutputCGI,	"text/plain"},
+	{"scartmode", 		&CControlAPI::ScartModeCGI,	"text/plain"},
 	// timer
-	{"timer", 			&CControlAPI::TimerCGI,			"text/plain"},
+	{"timer", 		&CControlAPI::TimerCGI,		"text/plain"},
 	// bouquet editing
 	{"setbouquet", 		&CControlAPI::setBouquetCGI,	"text/plain"},
 	{"savebouquet",		&CControlAPI::saveBouquetCGI,	"text/plain"},
@@ -1761,6 +1768,14 @@ void CControlAPI::YWeb_SendRadioStreamingPid(CyhookHandler *hh)
 //-----------------------------------------------------------------------------
 std::string CControlAPI::YexecuteScript(CyhookHandler *, std::string cmd)
 {
+#if HAVE_SPARK_HARDWARE
+    {
+	const char *fbshot = "Y_Tools fbshot fb /";
+	int len = strlen(fbshot);
+	if (!strncmp(cmd.c_str(), fbshot, len))
+		return CFrameBuffer::getInstance()->OSDShot(cmd.substr(len - 1)) ? "" : "error";
+    }
+#endif
 	std::string script, para, result;
 	bool found = false;
 
