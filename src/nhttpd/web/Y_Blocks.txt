@@ -59,6 +59,8 @@ start-block~nhttpd_save_settings
 {=ini-set:/var/tuxbox/config/nhttpd.conf;mod_sendfile.mime_types;{=mod_sendfile_mime_types=}~cache=}
 {=ini-set:/var/tuxbox/config/nhttpd.conf;mod_sendfile.sendAll;{=mod_sendfile_sendAll=}~cache=}
 {=ini-set:/var/tuxbox/config/nhttpd.conf;Language.selected;{=language=}~cache=}
+{=ini-set:/var/tuxbox/config/nhttpd.conf;Tuxbox.DisplayLogos;{=Tuxbox_DisplayLogos=}~cache=}
+{=ini-set:/var/tuxbox/config/nhttpd.conf;Tuxbox.PidSeparator;{=Tuxbox_PidSeparator=}~cache=}
 {=ini-set:/var/tuxbox/config/nhttpd.conf;Tuxbox.LogosURL;{=Tuxbox_LogosURL=}~save=}
 {=func:do_reload_httpd_config=}
 end-block~nhttpd_save_settings
@@ -250,7 +252,7 @@ end-block~snip_show_wait
 #<img src="/images/help.gif" align="bottom" />
 start-block~wiki_help
 <!--
-<a href="http://www.yjogol.com/{=var-get:help_url=}" target="_blank" title="get help from www.yjogol.com">?</a>
+<a href="http://opkg.familienforum.biz/webif/{=var-get:help_url=}" target="_blank" title="get help from www.familienforum.biz">?</a>
 -->
 end-block~wiki_help
 
@@ -511,18 +513,18 @@ start-block~remote
 {=var-set:yfbtype={=ini-get:/var/tuxbox/config/Y-Web.conf;fb;0=}=}
 {=var-set:boxtype={=func:get_boxtype=}=}
 {=if-equal:{=var-get:yfbtype=}~0~
-		{=if-equal:{=var-get:boxtype=}~CST Neo~		{=include-block:Y_Blocks.txt;rc_cst_v2=}~
-		{=if-equal:{=var-get:boxtype=}~CST Zee~		{=include-block:Y_Blocks.txt;rc_cst_v3=}~
-		{=if-equal:{=var-get:boxtype=}~CST Neo Twin~	{=include-block:Y_Blocks.txt;rc_cst_v4=}~
-		{=if-equal:{=var-get:boxtype=}~CST Tank~	{=include-block:Y_Blocks.txt;rc_cst_v5=}~
-		{=if-equal:{=var-get:boxtype=}~CST Trinity~	{=include-block:Y_Blocks.txt;rc_cst_v6=}~
-		{=if-equal:{=var-get:boxtype=}~CST Zee2~	{=include-block:Y_Blocks.txt;rc_cst_v6=}~
-		{=if-equal:{=var-get:boxtype=}~ufs910~		{=include-block:Y_Blocks.txt;rc_ufs910=}~
-		{=if-equal:{=var-get:boxtype=}~ufs922~		{=include-block:Y_Blocks.txt;rc_ufs910=}~
-		{=if-equal:{=var-get:boxtype=}~spark~		{=include-block:Y_Blocks.txt;rc_spark_old=}~
-		{=if-equal:{=var-get:boxtype=}~spark7162~	{=include-block:Y_Blocks.txt;rc_spark_new=}~
+	{=if-equal:{=var-get:boxtype=}~CST Neo~		{=include-block:Y_Blocks.txt;rc_cst_v2=}~
+	{=if-equal:{=var-get:boxtype=}~CST Zee~		{=include-block:Y_Blocks.txt;rc_cst_v3=}~
+	{=if-equal:{=var-get:boxtype=}~CST Neo Twin~	{=include-block:Y_Blocks.txt;rc_cst_v4=}~
+	{=if-equal:{=var-get:boxtype=}~CST Tank~	{=include-block:Y_Blocks.txt;rc_cst_v5=}~
+	{=if-equal:{=var-get:boxtype=}~CST Trinity~	{=include-block:Y_Blocks.txt;rc_cst_v6=}~
+	{=if-equal:{=var-get:boxtype=}~CST Zee2~	{=include-block:Y_Blocks.txt;rc_cst_v6=}~
+	{=if-equal:{=var-get:boxtype=}~ufs910~		{=include-block:Y_Blocks.txt;rc_ufs910=}~
+	{=if-equal:{=var-get:boxtype=}~ufs922~		{=include-block:Y_Blocks.txt;rc_ufs910=}~
+	{=if-equal:{=var-get:boxtype=}~spark~		{=include-block:Y_Blocks.txt;rc_spark_old=}~
+	{=if-equal:{=var-get:boxtype=}~spark7162~	{=include-block:Y_Blocks.txt;rc_spark_new=}~
 
-		{=comment:fallback~=}				{=include-block:Y_Blocks.txt;rc_ufs910=}
+	{=comment:fallback~=}			{=include-block:Y_Blocks.txt;rc_spark_new=}
 		=}=}=}=}=}=}=}=}=}=}
 ~
 	{=if-equal:{=var-get:yfbtype=}~-3~	{=include-block:Y_Blocks.txt;rc_ufs910=}~
@@ -535,7 +537,7 @@ start-block~remote
 	{=if-equal:{=var-get:yfbtype=}~5~	{=include-block:Y_Blocks.txt;rc_cst_v5=}~
 	{=if-equal:{=var-get:yfbtype=}~6~	{=include-block:Y_Blocks.txt;rc_cst_v6=}~
 
-	{=comment:fallback~=}			{=include-block:Y_Blocks.txt;rc_ufs910=}
+	{=comment:fallback~=}			{=include-block:Y_Blocks.txt;rc_spark_new=}
 	=}=}=}=}=}=}=}=}=}
 =}
 end-block~remote
@@ -944,6 +946,7 @@ start-block~rc_spark_old
   <area shape="circle" coords="130,363,10" href="javascript:rcsim('KEY_FAVORITES')" />
   <area shape="circle" coords="34,404,10" href="javascript:rcsim('KEY_MENU')" />
   <area shape="circle" coords="130,404,10" href="javascript:rcsim('KEY_INFO')" />
+  <area shape="circle" coords="37,503,10" href="javascript:rcsim('KEY_EXIT')" />
   <area shape="circle" coords="37,503,10" href="javascript:rcsim('KEY_HOME')" />
   <area shape="circle" coords="124,503,10" href="javascript:rcsim('KEY_EPG')" />
   <area shape="rect" coords="24,538,49,553" href="javascript:rcsim('KEY_ARCHIVE')" />
@@ -1004,6 +1007,7 @@ start-block~rc_spark_new
 <area shape="circle" coords="118,368,10" href="javascript:rcsim('KEY_RIGHT')" title="{=L:rc.key_right=}" /> 
 <area shape="circle" coords="27,314,13" href="javascript:rcsim('KEY_MENU')" title="{=L:rc.key_setup=}" /> 
 <area shape="circle" coords="122,314,13" href="javascript:rcsim('KEY_INFO')" title="{=L:rc.key_info=}" /> 
+<area shape="circle" coords="27,423,13" href="javascript:rcsim('KEY_EXIT')" title="{=L:rc.key_home=}" /> 
 <area shape="circle" coords="27,423,13" href="javascript:rcsim('KEY_HOME')" title="{=L:rc.key_home=}" /> 
 <area shape="circle" coords="122,423,13" href="javascript:rcsim('KEY_EPG')" title="{=L:rc.key_epg=}" /> 
 <area shape="circle" coords="76,453,20" href="javascript:rcsim('KEY_FAVORITES')" alt="Portal" title="{=L:rc.key_favorites=}" /> 
@@ -1029,5 +1033,5 @@ start-block~rc_spark_new
 <area shape="rect" coords="50,600,66,614" href="javascript:rcsim('KEY_F1')" /> 
 <area shape="rect" coords="83,600,101,614" href="javascript:rcsim('KEY_F2')" /> 
 <area shape="rect" coords="116,600,134,614" href="javascript:rcsim('KEY_F3')" /> 
-</map> 
+</map>
 end-block~rc_spark_new
