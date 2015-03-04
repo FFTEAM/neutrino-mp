@@ -91,9 +91,9 @@ const CMenuOptionChooser::keyval HDD_SLEEP_OPTIONS[HDD_SLEEP_OPTION_COUNT] =
 };
 
 devtool_s CHDDMenuHandler::devtools[] = {
-	{ "ext2",  "/sbin/fsck.ext2",  "-C 1 -f -y", "/sbin/mkfs.ext2",  "-T largefile -m0", false, false },
-	{ "ext3",  "/sbin/fsck.ext3",  "-C 1 -f -y", "/sbin/mkfs.ext3",  "-T largefile -m0", false, false },
 	{ "ext4",  "/sbin/fsck.ext4",  "-C 1 -f -y", "/sbin/mkfs.ext4",  "-T largefile -m0", false, false },
+	{ "ext3",  "/sbin/fsck.ext3",  "-C 1 -f -y", "/sbin/mkfs.ext3",  "-T largefile -m0", false, false },
+	{ "ext2",  "/sbin/fsck.ext2",  "-C 1 -f -y", "/sbin/mkfs.ext2",  "-T largefile -m0", false, false },
 	{ "jfs",   "/sbin/fsck.jfs",   "-a -f -p",   "/sbin/mkfs.jfs",   "-q",               false, false },
 	{ "vfat",  "/sbin/fsck.vfat",  "-a",         "/sbin/mkfs.vfat",  "",                 false, false },
 	{ "exfat", "/sbin/fsck.exfat", "",           "/sbin/mkfs.exfat", "",                 false, false },
@@ -434,7 +434,7 @@ void CHDDMenuHandler::showHint(std::string &message)
 
 void CHDDMenuHandler::setRecordPath(std::string &dev)
 {
-	std::string newpath = std::string(MOUNT_BASE) + dev + "/movies";
+	std::string newpath = std::string(MOUNT_BASE) + dev + "/movie";
 	if (g_settings.network_nfs_recordingdir == newpath) {
 		printf("CHDDMenuHandler::setRecordPath: recordingdir already set to %s\n", newpath.c_str());
 		return;
@@ -1084,7 +1084,7 @@ _remount:
 					dst = it->mountpoint;
 				}
 			}
-			snprintf(cmd, sizeof(cmd), "%s/movies", dst.c_str());
+			snprintf(cmd, sizeof(cmd), "%s/movie", dst.c_str());
 			safe_mkdir(cmd);
 			snprintf(cmd, sizeof(cmd), "%s/timeshift", dst.c_str());
 			safe_mkdir(cmd);
@@ -1267,7 +1267,7 @@ int CHDDDestExec::exec(CMenuTarget* /*parent*/, const std::string&)
 
 		if (removable) {
 			// show USB icon, no need for hdparm/hd-idle
-#if HAVE_SPARK_HARDWARE || HAVE_DUCKBOX_HARDWARE
+#if HAVE_DUCKBOX_HARDWARE || BOXMODEL_SPARK7162
 			CVFD::getInstance()->ShowIcon(FP_ICON_USB, true);
 #endif
 			printf("CHDDDestExec: /dev/%s is not a hdd, no sleep needed\n", namelist[i]->d_name);
