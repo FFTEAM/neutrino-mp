@@ -24,8 +24,9 @@
 #ifndef _UAPI_DVBVIDEO_H_
 #define _UAPI_DVBVIDEO_H_
 
+#ifdef __KERNEL__
 #include <linux/types.h>
-#ifndef __KERNEL__
+#else
 #include <stdint.h>
 #include <time.h>
 #endif

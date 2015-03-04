@@ -136,6 +136,7 @@ class CZapit : public OpenThreads::Thread
 		CZapitChannel * current_channel;
 		t_channel_id live_channel_id;
 		t_channel_id pip_channel_id;
+		t_channel_id chid; // temporary, but needs to be static
 		t_channel_id lock_channel_id;
 		t_channel_id last_channel_id;
 		/* scan params */
@@ -275,7 +276,8 @@ class CZapit : public OpenThreads::Thread
 		void EnablePlayback(bool enable) { playbackStopForced = !enable; }
 		void lockPlayBack(const bool sendpmt = true);
 		void unlockPlayBack(const bool sendpmt = true);
-		void Rezap();
+		void setStandby(const bool enable);
+		void Rezap(void);
 		std::list<std::string> *GetWebTVXML(void) { return webtv_xml; }
 };
 #endif /* __zapit_h__ */

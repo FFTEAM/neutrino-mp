@@ -56,7 +56,7 @@ class CZapitAbsSub
     enum ZapitSubtitleType {
         TTX,
         DVB,
-        SUB
+	SUB
     };
     ZapitSubtitleType thisSubType;
 };
@@ -121,7 +121,6 @@ class CZapitChannel
 	private:
 		/* channel name */
 		std::string name;
-		/* TODO : Enable different unames in different bouquets ( generated bouquetID ? ) */
 		std::string uname;
 
 		/* WebTV */

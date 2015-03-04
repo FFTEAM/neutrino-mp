@@ -27,6 +27,7 @@
 #define _DVBFRONTEND_H_
 
 #include <linux/types.h>
+#include <asm/types.h>
 
 typedef enum fe_type {
 	FE_QPSK,
@@ -121,28 +122,16 @@ typedef enum fe_sec_mini_cmd {
 	SEC_MINI_B
 } fe_sec_mini_cmd_t;
 
-
-/**
- * enum fe_status - enumerates the possible frontend status
- * @FE_HAS_SIGNAL:	found something above the noise level
- * @FE_HAS_CARRIER:	found a DVB signal
- * @FE_HAS_VITERBI:	FEC is stable
- * @FE_HAS_SYNC:	found sync bytes
- * @FE_HAS_LOCK:	everything's working
- * @FE_TIMEDOUT:	no lock within the last ~2 seconds
- * @FE_REINIT:		frontend was reinitialized, application is recommended
- *			to reset DiSEqC, tone and parameters
- */
-
 typedef enum fe_status {
-	FE_HAS_SIGNAL		= 0x01,
-	FE_HAS_CARRIER		= 0x02,
-	FE_HAS_VITERBI		= 0x04,
-	FE_HAS_SYNC		= 0x08,
-	FE_HAS_LOCK		= 0x10,
-	FE_TIMEDOUT		= 0x20,
-	FE_REINIT		= 0x40
-} fe_status_t;
+	FE_HAS_SIGNAL	= 0x01,   /*  found something above the noise level */
+	FE_HAS_CARRIER	= 0x02,   /*  found a DVB signal  */
+	FE_HAS_VITERBI	= 0x04,   /*  FEC is stable  */
+	FE_HAS_SYNC	= 0x08,   /*  found sync bytes  */
+	FE_HAS_LOCK	= 0x10,   /*  everything's working... */
+	FE_TIMEDOUT	= 0x20,   /*  no lock within the last ~2 seconds */
+	FE_REINIT	= 0x40    /*  frontend was reinitialized,  */
+} fe_status_t;			  /*  application is recommended to reset */
+				  /*  DiSEqC, tone and parameters */
 
 typedef enum fe_spectral_inversion {
 	INVERSION_OFF,
@@ -277,6 +266,7 @@ struct dvb_frontend_parameters {
 		struct dvb_vsb_parameters vsb;
 	} u;
 };
+
 
 struct dvb_frontend_event {
 	fe_status_t status;

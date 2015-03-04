@@ -25,6 +25,7 @@
 #include <cstring>
 #include <iostream>
 #include <unistd.h> /* sleep */
+#include <system/helpers.h>
 
 #include <zapit/client/zapitclient.h>
 
@@ -70,6 +71,8 @@ int usage (const char * basename)
 	std::cout << "switch to pal mode: " << basename << " --pal" << std::endl;
 	std::cout << "switch to hd 720p mode: " << basename << " --720p" << std::endl;
 	std::cout << "send diseqc 1.2 motor command: " << basename << " -m <cmdtype> <addr> <cmd> <number of parameters> <parameter 1> <parameter 2>" << std::endl;
+	std::cout << "lock remote control: " << basename << " -lockrc" << std::endl;
+	std::cout << "unlock remote control: " << basename << " -unlockrc" << std::endl;
 	return -1;
 }
 
@@ -92,6 +95,7 @@ int main (int argc, char** argv)
 	int nvod = -1;
 	int arat = -1;
 	int m43 = -1;
+	int lockrc = -1;
 	const char * channelName = NULL;
 
 	bool playback = false;
@@ -351,6 +355,16 @@ int main (int argc, char** argv)
 				continue;
 			}
 		}
+		else if (!strncmp(argv[i], "-lockrc", 7))
+		{
+			lockrc = 1;
+			continue;
+		}
+		else if (!strncmp(argv[i], "-unlockrc", 9))
+		{
+			lockrc = 0;
+			continue;
+		}
 		else if (i < argc - 1)
 		{
 			if ((sscanf(argv[i], "%d", &bouquet) > 0) && (sscanf(argv[++i], "%u", &channel) > 0))
@@ -416,6 +430,11 @@ int main (int argc, char** argv)
 	{
 		std::cout << "set volume" << std::endl;
 		zapit.setVolume(volume, volume);
+		return 0;
+	}
+	if (lockrc != -1)
+	{
+		zapit.lockRc(lockrc);
 		return 0;
 	}
 	if (rezap)

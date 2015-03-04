@@ -262,14 +262,6 @@ bool CFEManager::loadSettings()
 		}
 
 		if (fe->hasCable()) {
-#if 0
-			if (fcable) {
-				fcable = false;
-				def_mode = def_mode0;
-			}
-			if (def_mode > CFrontend::FE_MODE_INDEPENDENT)
-				def_mode = CFrontend::FE_MODE_INDEPENDENT;
-#endif
 			def_mode = CFrontend::FE_MODE_INDEPENDENT;
 		}
 

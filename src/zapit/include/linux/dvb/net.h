@@ -25,6 +25,7 @@
 #define _DVBNET_H_
 
 #include <linux/types.h>
+#include <asm/types.h>
 
 struct dvb_net_if {
 	__u16 pid;

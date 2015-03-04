@@ -336,11 +336,6 @@ bool CCamManager::SetMode(t_channel_id channel_id, enum runmode mode, bool start
 			if(!channel->scrambled)
 				continue;
 
-#if 0
-			if (it == channel_map.end())
-				list |= CCam::CAPMT_LAST; // FIRST->ONLY or MORE->LAST
-#endif
-
 			cam->makeCaPmt(channel, false, list, caids);
 			int len;
 			unsigned char * buffer = channel->getRawPmt(len);

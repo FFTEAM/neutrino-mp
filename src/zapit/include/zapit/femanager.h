@@ -32,7 +32,7 @@
 #include <OpenThreads/ReentrantMutex>
 
 #define MAX_FE          4
-#define MAX_ADAPTERS    1
+#define MAX_ADAPTERS    4
 //#define DYNAMIC_DEMUX
 //#define MAKE_FE_KEY(adapter, number) ((adapter << 8) | (number & 0xFF))
 
@@ -44,6 +44,7 @@ typedef fe_map_t::iterator fe_map_iterator_t;
 typedef std::map<CFrontend*, t_channel_id> fe_channel_map_t;
 typedef fe_channel_map_t::iterator fe_channel_map_iterator_t;
 
+typedef std::set<fe_type_t> fe_type_list_t;
 typedef struct common_fe_config {
 	double gotoXXLatitude, gotoXXLongitude;
 	int gotoXXLaDirection, gotoXXLoDirection;

@@ -80,16 +80,6 @@ bool CServiceManager::ParseScanXml(delivery_system_t delsys)
 
 	return (scanInputParser != NULL);
 }
-#if 0 
-//never used
-xmlDocPtr CServiceManager::ScanXml()
-{
-	if(!scanInputParser)
-		ParseScanXml();
-
-	return scanInputParser;
-}
-#endif
 bool CServiceManager::AddChannel(CZapitChannel * &channel)
 {
 	channel_insert_res_t ret = allchans.insert (
@@ -132,15 +122,6 @@ bool CServiceManager::AddNVODChannel(CZapitChannel * &channel)
 void CServiceManager::ResetChannelNumbers(bool bouquets, bool numbers)
 {
 	for (channel_map_iterator_t it = allchans.begin(); it != allchans.end(); ++it) {
-#if 0 /* force to get free numbers if there are any */
-		if(have_numbers) {
-			if(!it->second.number) {
-				it->second.number = GetFreeNumber(it->second.getServiceType() == ST_DIGITAL_RADIO_SOUND_SERVICE);
-			}
-		} else {
-			it->second.number = 0;
-		}
-#endif
 		if(!keep_numbers || numbers)
 			it->second.number = 0;
 		if(bouquets)
@@ -177,13 +158,6 @@ void CServiceManager::RemovePosition(t_satellite_position satellitePosition)
 	INFO("delete %d, size after: %zd", satellitePosition, allchans.size());
 }
 
-#if 0 
-//never used
-void CServiceManager::RemoveNVODChannels()
-{
-	nvodchannels.clear();
-}
-#endif
 void CServiceManager::RemoveCurrentChannels()
 {
 	curchans.clear();
@@ -555,11 +529,6 @@ void CServiceManager::FindTransponder(xmlNodePtr search)
 			search = search->xmlNextNode;
 			continue;
 		}
-#if 0
-		//t_satellite_position satellitePosition = xmlGetSignedNumericAttribute(search, "position", 10);
-		char * name = xmlGetAttribute(search, "name");
-		t_satellite_position satellitePosition = GetSatellitePosition(name);
-#endif
 		DBG("going to parse dvb-%c provider %s\n", xmlGetName(search)[0], xmlGetAttribute(search, "name"));
 		ParseTransponders(search->xmlChildrenNode, satellitePosition, delsys);
 		newfound++;
@@ -667,10 +636,6 @@ void CServiceManager::ParseSatTransponders(delivery_system_t delsys, xmlNodePtr 
 
 			int xml_fec = xmlGetNumericAttribute(tps, "fec_inner", 0);
 			xml_fec = CFrontend::getCodeRate(xml_fec, feparams.delsys);
-#if 0
-			if(modulation == 2 && ((fe_code_rate_t) xml_fec != FEC_AUTO))
-				xml_fec += 9;
-#endif
 			feparams.fec_inner = (fe_code_rate_t) xml_fec;
 			feparams.frequency = (int) 1000 * (int) round ((double) feparams.frequency / (double) 1000);
 		}
@@ -770,29 +735,6 @@ int CServiceManager::LoadMotorPositions(void)
 
 	return 0;
 }
-#if 0 
-//never used
-void CServiceManager::SaveMotorPositions()
-{
-	FILE * fd;
-	sat_iterator_t sit;
-	printf("[getservices] saving motor positions...\n");
-
-	fd = fopen(SATCONFIG, "w");
-	if(fd == NULL) {
-		printf("[zapit] cannot open %s\n", SATCONFIG);
-		return;
-	}
-	fprintf(fd, "# sat position, stored rotor, diseqc, commited, uncommited, low, high, switch, use in full scan, use usals, input\n");
-	for(sit = satellitePositions.begin(); sit != satellitePositions.end(); ++sit) {
-		fprintf(fd, "%d %d %d %d %d %d %d %d %d %d %d\n", sit->first, sit->second.motor_position,
-				sit->second.diseqc, sit->second.commited, sit->second.uncommited, sit->second.lnbOffsetLow,
-				sit->second.lnbOffsetHigh, sit->second.lnbSwitch, sit->second.use_in_scan, sit->second.use_usals, sit->second.input);
-	}
-	fdatasync(fileno(fd));
-	fclose(fd);
-}
-#endif
 
 bool CServiceManager::InitSatPosition(t_satellite_position position, char * name, bool force, delivery_system_t delsys, uint16_t nid)
 {
@@ -869,13 +811,6 @@ bool CServiceManager::LoadServices(bool only_current)
 	if(only_current)
 		goto do_current;
 
-#if 0 // FIXME: obsolete ?
-	static bool satcleared = 0;//clear only once, because menu is static
-	if(!satcleared) {
-		satellitePositions.clear();
-		satcleared = 1;
-	}
-#endif
 
 	TIMER_START();
 	allchans.clear();
@@ -961,11 +896,6 @@ bool CServiceManager::LoadServices(bool only_current)
 			}
 		}
 	}
-#if 0
-	if (CFEManager::getInstance()->haveSat()) {
-		LoadMotorPositions();
-	}
-#endif
 
 	LoadProviderMap();
 	printf("[zapit] %d services loaded (%d)...\n", service_count, (int)allchans.size());
@@ -979,20 +909,6 @@ bool CServiceManager::LoadServices(bool only_current)
 	/* reset flag after loading services.xml */
 	services_changed = false;
 do_current:
-#if 0
-	DBG("Loading current..\n");
-	if (CZapit::getInstance()->scanSDT() && (parser = parseXmlFile(CURRENTSERVICES_XML))) {
-		newfound = 0;
-		printf("[getservices] " CURRENTSERVICES_XML "  found.\n");
-		FindTransponder(xmlDocGetRootElement(parser)->xmlChildrenNode);
-		xmlFreeDoc(parser);
-		unlink(CURRENTSERVICES_XML);
-		if(newfound) {
-			//SaveServices(true);
-			services_changed = true;
-		}
-	}
-#endif
 	if(!only_current) {
 		parser = parseXmlFile(MYSERVICES_XML);
 		if (parser != NULL) {
@@ -1352,22 +1268,6 @@ bool CServiceManager::ReplaceProviderName(std::string &name, t_transport_stream_
 	}
 	return false;
 }
-#if 0 
-//never used
-int CServiceManager::GetFreeNumber(bool radio)
-{
-	service_number_map_t * channel_numbers = radio ? &radio_numbers : &tv_numbers;
-	int i = 0;
-	while(true) {
-		++i;
-		service_number_map_t::iterator it = channel_numbers->find(i);
-		if(it == channel_numbers->end()) {
-			channel_numbers->insert(i);
-			return i;
-		}
-	}
-}
-#endif
 int CServiceManager::GetMaxNumber(bool radio)
 {
 	service_number_map_t * channel_numbers = radio ? &radio_numbers : &tv_numbers;
@@ -1379,20 +1279,6 @@ int CServiceManager::GetMaxNumber(bool radio)
 	}
 	return i+1;
 }
-#if 0 
-//never used
-void CServiceManager::FreeNumber(int number, bool radio)
-{
-	service_number_map_t * channel_numbers = radio ? &radio_numbers : &tv_numbers;
-	channel_numbers->erase(number);
-}
-
-void CServiceManager::UseNumber(int number, bool radio)
-{
-	service_number_map_t * channel_numbers = radio ? &radio_numbers : &tv_numbers;
-	channel_numbers->insert(number);
-}
-#endif
 bool CServiceManager::GetTransponder(transponder_id_t tid, transponder &t)
 {
 	stiterator tI = transponders.find(tid);

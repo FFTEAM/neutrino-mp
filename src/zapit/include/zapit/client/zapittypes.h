@@ -42,11 +42,6 @@ typedef enum {
 	DISEQC_1_2,
 	DISEQC_ADVANCED,
 	DISEQC_UNICABLE
-#if 0
-	, DISEQC_2_0,
-	DISEQC_2_1,
-	DISEQC_2_2
-#endif
 } diseqc_t;
 
 /* video display formats (cf. video_displayformat_t in driver/dvb/include/linux/dvb/video.h): */
@@ -83,6 +78,7 @@ typedef enum {
 typedef struct TP_parameter
 {
 	uint64_t TP_id;					/* diseqc<<24 | feparams->frequency>>8 */
+	uint8_t polarization;
 	uint8_t diseqc;
 	int scan_mode;
 	FrontendParameters feparams;

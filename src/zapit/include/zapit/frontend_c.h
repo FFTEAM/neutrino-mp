@@ -4,6 +4,7 @@
  * (C) 2002-2003 Andreas Oberritter <obi@tuxbox.org>
  *
  * Copyright (C) 2011 CoolStream International Ltd
+ * Copyright (C) 2009,2010,2012,2013 Stefan Seyfried
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,11 +138,9 @@ class CFrontend
 		int32_t lnbOffsetLow;
 		int32_t lnbOffsetHigh;
 		int32_t lnbSwitch;
-
 		/* current Transponderdata */
 		transponder currentTransponder;
 		uint8_t currentDiseqc;
-
 		bool slave;
 		fe_work_mode_t femode;
 		bool have_loop;
@@ -150,11 +149,7 @@ class CFrontend
 		fe_linkmap_t linkmap;
 		int fenumber;
 		bool standby;
-
 		uint32_t			deliverySystemMask;
-		//fe_delivery_system_t deliverySystems[MAX_DELSYS];
-		//uint32_t numDeliverySystems;
-
 		bool				buildProperties(const FrontendParameters*, struct dtv_properties &);
 
 		FrontendParameters		getFrontend(void) const;

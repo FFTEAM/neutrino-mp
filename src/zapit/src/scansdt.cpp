@@ -196,14 +196,6 @@ bool CSdt::Parse(t_transport_stream_id &tsid, t_original_network_id &onid)
 					break;
 				case CA_IDENTIFIER_DESCRIPTOR:
 					{
-#if 0 //ifdef DEBUG_SDT
-						CaIdentifierDescriptor * cad = (CaIdentifierDescriptor *) d;
-						const CaSystemIdList * calist = cad->getCaSystemIds();
-						printf("CASYS: ");
-						for(CaSystemIdConstIterator cit = calist->begin(); cit != calist->end(); ++cit)
-							printf("%02x ", *cit);
-						printf("\n");
-#endif
 					}
 					break;
 				default:
@@ -297,12 +289,6 @@ bool CSdt::ParseServiceDescriptor(ServiceDescription * service, ServiceDescripto
 						serviceName.c_str(), free_ca, channel->scrambled);
 #endif
 		}
-#if 0 //FIXME updates scrambled flag without reloading, but prevent changes found if only scrambled different
-		bool scrambled = channel->scrambled;
-		channel = CServiceManager::getInstance()->FindChannel(channel_id);
-		if(channel)
-			channel->scrambled = scrambled;
-#endif
 		return true;
 	}
 

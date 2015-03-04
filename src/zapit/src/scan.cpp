@@ -404,10 +404,6 @@ _repeat:
 				if(channel && !bouquet->getChannelByChannelID(channel->getChannelID())) {
 					bouquet->addService(channel);
 				}
-#if 0
-				else
-					printf("CServiceScan::ReadNitSdt: channel id %016llx not found\n", *cit);
-#endif
 			}
 			if(have_lcn)
 				bouquet->sortBouquetByNumber();
@@ -509,13 +505,6 @@ void CServiceScan::CheckSatelliteChannels(t_satellite_position satellitePosition
 
 void CServiceScan::SaveServices()
 {
-#if 0 // old
-	CServiceManager::getInstance()->SaveServices(true);
-	printf("[scan] save services done\n"); fflush(stdout);
-	g_bouquetManager->saveBouquets();
-	g_bouquetManager->loadBouquets();
-	printf("[scan] save bouquets done\n");
-#endif
 #ifdef USE_BAT
 	if(flags & SCAN_BAT) {
 		g_bouquetManager->saveUBouquets();
@@ -575,10 +564,6 @@ bool CServiceScan::ScanProviders()
 	} else {
 		Cleanup(false);
 		frontend->setTsidOnid(0);
-#if 0
-		t_channel_id live_channel_id = CZapit::getInstance()->GetCurrentChannelID();
-		CZapit::getInstance()->ZapIt(live_channel_id, false);
-#endif
 	}
 
 	return (found_channels != 0);
@@ -623,10 +608,6 @@ bool CServiceScan::ScanTransponder()
 	ReadNitSdt(satellitePosition);
 	FixServiceTypes();
 	CServiceManager::getInstance()->UpdateSatTransponders(satellitePosition);
-#if 0
-	if (found_channels)
-		ReplaceTransponderParams(freq, satellitePosition, &TP->feparams);
-#endif
 	printf("[scan] found %d transponders (%d failed) and %d channels\n", found_transponders, failed_transponders, found_channels);
 	if(abort_scan)
 		found_channels = 0;
@@ -640,34 +621,11 @@ bool CServiceScan::ScanTransponder()
 	} else {
 		Cleanup(false);
 		frontend->setTsidOnid(0);
-#if 0
-		t_channel_id live_channel_id = CZapit::getInstance()->GetCurrentChannelID();
-		CZapit::getInstance()->ZapIt(live_channel_id, false);
-#endif
 	}
 
 	return (found_channels != 0);
 }
 
-#if 0 
-//never used
-bool CServiceScan::ReplaceTransponderParams(freq_id_t freq, t_satellite_position satellitePosition, FrontendParameters *feparams)
-{
-	bool ret = false;
-	for (transponder_list_t::iterator tI = transponders.begin(); tI != transponders.end(); ++tI) {
-		if (tI->second.satellitePosition == satellitePosition) {
-			freq_id_t newfreq = CREATE_FREQ_ID(tI->second.feparams.frequency, !frontend->isSat());
-			if (freq == newfreq) {
-				memcpy(&tI->second.feparams, feparams, sizeof(FrontendParameters));
-				printf("[scan] replacing transponder parameters\n");
-				ret = true;
-				break;
-			}
-		}
-	}
-	return ret;
-}
-#endif
 void CServiceScan::SendTransponderInfo(transponder &t)
 {
 	CZapit::getInstance()->SendEvent(CZapitClient::EVT_SCAN_REPORT_NUM_SCANNED_TRANSPONDERS, &processed_transponders, sizeof(processed_transponders));

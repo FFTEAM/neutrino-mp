@@ -384,10 +384,6 @@ bool CServiceScan::ParseFst(unsigned short pid, fast_scan_operator_t * op)
 		return false;
 	}
 
-#if 0
-	g_bouquetManager->clearAll();
-	CServiceManager::getInstance()->RemoveAllChannels();
-#endif
 	ZapitChannelList ChannelList;
 	CServiceManager::getInstance()->GetAllTvChannels(ChannelList, CZapitChannel::FASTSCAN);
 	for (zapit_list_it_t oldI = ChannelList.begin(); oldI != ChannelList.end(); ++oldI)
@@ -437,11 +433,6 @@ bool CServiceScan::ParseFst(unsigned short pid, fast_scan_operator_t * op)
 						std::map <t_channel_id, t_satellite_position>::iterator sIt = fast_services_sat.find(channel_id);
 						if(sIt != fast_services_sat.end()) {
 							satellitePosition = sIt->second;
-#if 0
-							sat_iterator_t sit = satellitePositions.find(satellitePosition);
-							if(sit != satellitePositions.end())
-								sit->second.have_channels = true;
-#endif
 						}
 
 						std::map <t_channel_id, freq_id_t>::iterator fIt = fast_services_freq.find(channel_id);
@@ -670,11 +661,6 @@ bool CServiceScan::ParseFnt(unsigned short pid, unsigned short operator_id)
 								transponders.insert(transponder_pair_t(TsidOnid, t));
 							}
 							found_transponders++;
-#if 0
-							uint32_t  actual_freq = freq;
-							CZapit::getInstance()->SendEvent(CZapitClient::EVT_SCAN_REPORT_FREQUENCY,
-									&actual_freq, sizeof(actual_freq));
-#endif
 							//satellite_delivery_system_descriptor(buffer + pos2, transport_stream_id, original_network_id, satellitePosition, freq);
 						}
 						break;

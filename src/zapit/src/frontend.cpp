@@ -607,14 +607,6 @@ fe_status_t CFrontend::getStatus(void) const
 	return (fe_status_t) (event.status & FE_HAS_LOCK);
 }
 
-#if 0 
-//never used
-FrontendParameters CFrontend::getFrontend(void) const
-{
-	return currentTransponder.feparams;
-}
-#endif
-
 uint32_t CFrontend::getBitErrorRate(void) const
 {
 	uint32_t ber = 0;
@@ -639,17 +631,6 @@ uint16_t CFrontend::getSignalNoiseRatio(void) const
 	fop(ioctl, FE_READ_SNR, &snr);
 	return snr;
 }
-
-#if 0 
-//never used
-uint32_t CFrontend::getUncorrectedBlocks(void) const
-{
-	uint32_t blocks = 0;
-	fop(ioctl, FE_READ_UNCORRECTED_BLOCKS, &blocks);
-
-	return blocks;
-}
-#endif
 
 struct dvb_frontend_event CFrontend::getEvent(void)
 {
@@ -1332,17 +1313,6 @@ void CFrontend::setDiseqcType(const diseqc_t newDiseqcType, bool force)
 	case DISEQC_UNICABLE:
 		INFO("fe%d: DISEQC_UNICABLE", fenumber);
 		break;
-#if 0
-	case DISEQC_2_0:
-		INFO("DISEQC_2_0");
-		break;
-	case DISEQC_2_1:
-		INFO("DISEQC_2_1");
-		break;
-	case DISEQC_2_2:
-		INFO("DISEQC_2_2");
-		break;
-#endif
 	default:
 		WARN("Invalid DiSEqC type");
 		return;
@@ -1388,11 +1358,6 @@ void CFrontend::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t comma
 	cmd.msg_len = 3 + num_parameters;
 
 	secSetTone(SEC_TONE_OFF, 15);
-#if 0
-	fe_sec_voltage_t oldVoltage = currentVoltage;
-	//secSetVoltage(config.highVoltage ? SEC_VOLTAGE_18 : SEC_VOLTAGE_13, 15);
-	//secSetVoltage(SEC_VOLTAGE_13, 100);
-#endif
 
 	for(i = 0; i <= repeat; i++)
 		sendDiseqcCommand(&cmd, 50);
@@ -1520,18 +1485,6 @@ bool CFrontend::tuneChannel(CZapitChannel * /*channel*/, bool /*nvod*/)
 	return tuneFrequency(&transponder->second.feparams, false);
 }
 
-#if 0
-bool CFrontend::retuneChannel(void)
-{
-	mutex.lock();
-	setInput(currentSatellitePosition, currentTransponder.feparams.frequency, currentTransponder.feparams.polarization);
-	transponder_list_t::iterator transponder = transponders.find(currentTransponder.TP_id);
-	if (transponder == transponders.end())
-		return false;
-	mutex.unlock();
-	return tuneFrequency(&transponder->second.feparams, transponder->second.feparams.polarization, true);
-}
-#endif
 
 int CFrontend::tuneFrequency(FrontendParameters *feparams, bool nowait)
 {
@@ -1641,14 +1594,6 @@ bool CFrontend::setDiseqcSimple(int sat_no, const uint8_t pol, const uint32_t fr
 		return true;
 	}
 	return false;
-#if 0				//do we need this in advanced setup ?
-	if (config.diseqcType == SMATV_REMOTE_TUNING)
-		sendDiseqcSmatvRemoteTuningCommand(frequency);
-
-	if (config.diseqcType == MINI_DISEQC)
-		sendToneBurst(b, 15);
-	currentDiseqc = sat_no;
-#endif
 }
 
 void CFrontend::setDiseqc(int sat_no, const uint8_t pol, const uint32_t frequency)
@@ -1672,10 +1617,6 @@ void CFrontend::setDiseqc(int sat_no, const uint8_t pol, const uint32_t frequenc
 	// Set wanted voltage and wait at least 100 ms, in case voltage was off.
 	secSetVoltage((pol & 1) ? SEC_VOLTAGE_13 : SEC_VOLTAGE_18, 100);
 
-#if 0 /* FIXME: is this necessary ? */
-	sendDiseqcReset();
-	sendDiseqcPowerOn();
-#endif
 
 	for (loop = 0; loop <= config.diseqcRepeats; loop++) {
 		delay = 0;
